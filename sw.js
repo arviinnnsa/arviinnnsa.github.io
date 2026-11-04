@@ -1,11 +1,12 @@
-/* Arvin's Planner service worker (v4)
+/* Arvin's Planner service worker (v6)
+   - Notifications: tapping one opens (or focuses) the planner.
    - Opening the app: tries the network for up to 2.5 s, then shows the saved copy,
      so a weak signal never leaves you on a blank screen.
    - Icons, splash screens: served instantly from the device, refreshed in the background.
    - Hanken Grotesk font: saved on the device so the app looks the same offline.
    - Google Calendar, sign-in and weather requests are never cached here
      (the app keeps its own saved copy of your events). */
-const VERSION = "ap-v5";
+const VERSION = "ap-v6";
 const SHELL = VERSION + "-shell";
 const FONTS = "ap-fonts-v1";
 const FONT_CSS = "https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&display=swap";
@@ -94,4 +95,12 @@ self.addEventListener("fetch", e => {
   if (url.hostname === "fonts.gstatic.com") { e.respondWith(cacheFirst(e, FONTS)); return; }
   if (url.hostname === "fonts.googleapis.com") { e.respondWith(staleWhileRevalidate(e, FONTS)); return; }
   // everything else (Google Calendar API, sign-in, weather) goes straight to the network
+});
+
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
+    for (const c of list) if ("focus" in c) return c.focus();
+    return self.clients.openWindow("./");
+  }));
 });
