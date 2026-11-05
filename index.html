@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<script>(function(){try{var m=localStorage.getItem("ap-theme")||"auto",r=document.documentElement,h=+new Date().toLocaleString("en-US",{timeZone:"America/Vancouver",hour:"numeric",hourCycle:"h23"});var d=m==="dark"?"dark":m==="light"?"light":(h>=18||h<7)?"dark":null;if(d)r.setAttribute("data-theme",d)}catch(e){}})();</script>
+<script>(function(){try{var m=localStorage.getItem("ap-theme")||"auto",r=document.documentElement,h=+new Date().toLocaleString("en-US",{timeZone:"Etc/GMT+7",hour:"numeric",hourCycle:"h23"});var d=m==="dark"?"dark":m==="light"?"light":(h>=18||h<7)?"dark":null;if(d)r.setAttribute("data-theme",d)}catch(e){}})();</script>
 
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2778,13 +2778,13 @@ DEEP.p8 = {
 <script>
 (()=>{
 "use strict";
-const TZ="America/Vancouver",SNAP_DATE="Oct 26";
+const TZ="America/Vancouver",CLOCK="Etc/GMT+7",SNAP_DATE="Oct 26";/* BC stays on UTC-7 year-round since Nov 1 2026; CLOCK keeps the planner right even if a device still has the old fall-back rule */
 const $=s=>document.querySelector(s);
 const h=(tag,attrs={},...kids)=>{const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs)){if(v==null||v===false)continue;if(k==="class")e.className=v;else if(k==="style")e.style.cssText=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else e.setAttribute(k,v===true?"":v)}for(const c of kids.flat()){if(c==null||c===false)continue;e.append(c.nodeType?c:document.createTextNode(String(c)))}return e};
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- time ---------- */
-const fmtNow=new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+const fmtNow=new Intl.DateTimeFormat("en-CA",{timeZone:CLOCK,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
 function nowParts(){const p={};for(const x of fmtNow.formatToParts(new Date()))p[x.type]=x.value;const hr=p.hour==="24"?"00":p.hour;return{key:`${p.year}-${p.month}-${p.day}`,min:+hr*60+ +p.minute}}
 const pad=n=>String(n).padStart(2,"0");
 const keyOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -2856,7 +2856,7 @@ let WX=null,SC={ph:"night",wx:"clear",temp:null,sig:"night|clear"};
 try{const s=JSON.parse(localStorage.getItem("ap-wx")||"null");if(s&&s.hours&&Date.now()-s.at<12*3600e3)WX=s}catch(e){}
 function sunTimes(key){const d=dateOf(key),doy=Math.round((d-new Date(d.getFullYear(),0,0))/864e5),R=Math.PI/180,lat=WXLL.lat*R,dec=23.44*R*Math.sin(2*Math.PI*(284+doy)/365);
   const ha=Math.acos(Math.max(-1,Math.min(1,(Math.sin(-.833*R)-Math.sin(lat)*Math.sin(dec))/(Math.cos(lat)*Math.cos(dec)))))/R,B=2*Math.PI*(doy-81)/364,eot=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);
-  const dst=new Date(d.getFullYear(),d.getMonth(),d.getDate(),12).getTimezoneOffset()===420?60:0,noon=720+(-120-WXLL.lon)*4-eot+dst;
+  const dst=60,noon=720+(-120-WXLL.lon)*4-eot+dst;
   return{rise:Math.round(noon-ha*4),set:Math.round(noon+ha*4)}}
 const condMemo={};
 function condAt(at){const n=nowParts();let key=n.key,m=n.min;
@@ -3975,7 +3975,7 @@ function banner(text,label,action){const b=$("#banner");if(!b)return;if(!text){b
   b.replaceChildren(...[h("span",{},text),label?h("button",{class:"bt primary",onclick:action},label):null].filter(Boolean));b.hidden=false}
 let siteBusy=false;
 function cacheTime(){try{const c=JSON.parse(localStorage.getItem("ap-cache")||"null");return c&&c.ts?c.ts:0}catch(e){return 0}}
-function whenText(ts){if(!ts)return"";const d=new Date(ts),k=keyOf(d),n=nowParts().key;return`${k===n?"today":relDay(n,k).toLowerCase()} at ${d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}`}
+function whenText(ts){if(!ts)return"";const d=new Date(ts),k=new Intl.DateTimeFormat("en-CA",{timeZone:CLOCK}).format(d),n=nowParts().key;return`${k===n?"today":relDay(n,k).toLowerCase()} at ${d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit",timeZone:CLOCK})}`}
 function offlineState(){mcpOK=!!GA.cid;const ts=cacheTime();
   setSync("warn",ts?`Offline. Showing your schedule from ${whenText(ts)}.`:"Offline. Connect once to load your schedule.");
   banner(ts?`You're offline. This is your schedule from ${whenText(ts)}. Anything you plan is saved and added to Google Calendar when you're back online.`:"You're offline. Connect to the internet once to load your schedule.",null)}
@@ -4003,7 +4003,7 @@ async function siteSync(){
     try{const hol=await listAll(HOLIDAY_CAL,w);live.holiday={from:w.from,to:w.to,events:hol.map(x=>normLive(x,"holiday")).filter(Boolean)}}catch(e){if(e.code==="auth")throw e}
     try{localStorage.setItem("ap-cache",JSON.stringify({ts:Date.now(),live}))}catch(e){}
     scheduleAlertSync();
-    setSync("live",`Synced live, last update ${new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}`);
+    setSync("live",`Synced live, last update ${new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit",timeZone:CLOCK})}`);
     if(!$("#sheet").classList.contains("on"))refresh();else EV=allEvents();
   }catch(e){
     if(e.code==="auth"){if(!trySilent()){setSync("warn","Signed out of Google");banner("Sign in with Google to load your latest schedule.","Sign in",()=>signIn(false))}}
@@ -4073,7 +4073,7 @@ async function pullNative(){
   if(!list.length){setSync("warn","No events found. Add your Google account to the Calendar app to sync. Showing the copy from "+SNAP_DATE+".");return}
   const pri=[],hol=[];for(const e of list)(e.cal==="holiday"?hol:pri).push(e);
   live.primary={from:w.from,to:w.to,events:pri};live.holiday=hol.length?{from:w.from,to:w.to,events:hol}:null;
-  lastSync.native=Date.now();setSync("live",`Synced with your calendars, ${new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}`);
+  lastSync.native=Date.now();setSync("live",`Synced with your calendars, ${new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit",timeZone:CLOCK})}`);
   if(!$("#sheet").classList.contains("on"))refresh();else EV=allEvents();
 }
 async function nativeSync(){
@@ -4123,7 +4123,7 @@ async function flushNote(){clearTimeout(timer);const p=pending;pending={};for(co
 const GC="Google Calendar";let mcp=null,mcpOK=false;const lastSync={};
 function setSync(s,t){$("#sync").dataset.s=s;$("#syncTxt").textContent=t}
 function winFor(){const t=nowParts().key;return{from:[addDays(t,-45),"2026-09-01"].sort()[0],to:[addDays(t,150),"2027-01-02"].sort()[1]}}
-function syncLabel(){const ts=Math.max(...Object.values(lastSync));if(!isFinite(ts))return;setSync("live",`Synced live, last update ${new Date(ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit",timeZone:TZ})}`)}
+function syncLabel(){const ts=Math.max(...Object.values(lastSync));if(!isFinite(ts))return;setSync("live",`Synced live, last update ${new Date(ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit",timeZone:CLOCK})}`)}
 function mcpError(err){const c=err?.code;
   if(c==="needs_reauth")return setSync("warn","Reconnect Google Calendar in Settings, then Connectors");
   if(c==="server_not_connected"||c==="server_not_found"||c==="selection_required")return setSync("warn",`Add Google Calendar in Settings, then Connectors. Showing the copy from ${SNAP_DATE}.`);

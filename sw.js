@@ -6,7 +6,7 @@
    - Hanken Grotesk font: saved on the device so the app looks the same offline.
    - Google Calendar, sign-in and weather requests are never cached here
      (the app keeps its own saved copy of your events). */
-const VERSION = "ap-v6";
+const VERSION = "ap-v7";
 const SHELL = VERSION + "-shell";
 const FONTS = "ap-fonts-v1";
 const FONT_CSS = "https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&display=swap";
