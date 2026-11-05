@@ -1310,7 +1310,7 @@ body{letter-spacing:-.011em}
     <div class="today" id="todayBox"></div>
   </section>
 
-  <section aria-labelledby="cTitle" data-tab="today week">
+  <section aria-labelledby="cTitle" data-tab="school">
     <div class="shead"><div><h2 id="cTitle">Courses and work.</h2><p>Tap a course for slides, lecture notes, quizzes and practice for every chapter.</p></div>
       <div class="arrows"><button class="arrow" id="cPrev" aria-label="Scroll left"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button class="arrow" id="cNext" aria-label="Scroll right"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div></div>
     <div class="rowlbl">School</div>
@@ -1319,13 +1319,13 @@ body{letter-spacing:-.011em}
     <div class="rail rail2" id="rail2"></div>
   </section>
 
-  <section aria-labelledby="dTitle" data-tab="today">
+  <section aria-labelledby="dTitle" data-tab="school">
     <div class="shead"><div><h2 id="dTitle">Exams and due dates.</h2><p>Counted down in days, soonest first.</p></div></div>
     <div class="tl30" id="tl30"></div>
     <div class="dgrid" id="dgrid"></div>
   </section>
 
-  <section aria-labelledby="xfTitle" id="xfer" data-tab="today">
+  <section aria-labelledby="xfTitle" id="xfer" data-tab="school">
     <div class="shead"><div><h2 id="xfTitle">UBC transfer.</h2><p>Your checklist for Sauder and Beedie, and your running course average.</p></div></div>
     <div id="xferBox"></div>
   </section>
@@ -3052,26 +3052,26 @@ function rrect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,
 /* A loaded barbell on a rack under a warm gym light */
 function drawGym(g,W,H){
   const r=rng(23);let{ax,ay,s}=stage(W,H);if(H>W*.9){s*=.92;ax=W*.5}const floor=ay+s*.42;
-  const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#0E1916");bg.addColorStop(1,"#1B2B25");g.fillStyle=bg;g.fillRect(0,0,W,H);
+  const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#121110");bg.addColorStop(1,"#211d19");g.fillStyle=bg;g.fillRect(0,0,W,H);
   const spot=g.createRadialGradient(ax,-H*.15,0,ax,-H*.15,H*1.15);spot.addColorStop(0,"rgba(255,226,175,.42)");spot.addColorStop(.6,"rgba(255,226,175,.08)");spot.addColorStop(1,"rgba(255,226,175,0)");g.fillStyle=spot;g.fillRect(0,0,W,H);
-  g.fillStyle="rgba(5,12,10,.55)";g.fillRect(0,floor,W,H-floor);
+  g.fillStyle="rgba(10,8,6,.55)";g.fillRect(0,floor,W,H-floor);
   // tall windows behind, throwing long shafts of light across the floor
   g.save();g.globalCompositeOperation="lighter";
   for(let i=0;i<4;i++){const wx=ax-s*1.25+i*s*.34,wy=ay-s*.95,ww=s*.16,wh=s*.62;
-    const wg=g.createLinearGradient(0,wy,0,wy+wh);wg.addColorStop(0,"rgba(190,225,210,.10)");wg.addColorStop(1,"rgba(190,225,210,.03)");g.fillStyle=wg;g.fillRect(wx,wy,ww,wh);
+    const wg=g.createLinearGradient(0,wy,0,wy+wh);wg.addColorStop(0,"rgba(240,225,200,.10)");wg.addColorStop(1,"rgba(240,225,200,.03)");g.fillStyle=wg;g.fillRect(wx,wy,ww,wh);
     const bm=g.createLinearGradient(wx,wy,wx+s*.9,floor+s*.3);bm.addColorStop(0,"rgba(255,236,200,.09)");bm.addColorStop(1,"rgba(255,236,200,0)");g.fillStyle=bm;
     g.beginPath();g.moveTo(wx,wy);g.lineTo(wx+ww,wy);g.lineTo(wx+ww+s*1.05,floor+s*.5);g.lineTo(wx+s*.82,floor+s*.5);g.closePath();g.fill()}
   g.restore();
-  g.strokeStyle="rgba(160,210,185,.07)";g.lineWidth=1;for(let x=-W;x<W*2;x+=s*.16){g.beginPath();g.moveTo(x,floor);g.lineTo(ax+(x-ax)*3,H);g.stroke()}
+  g.strokeStyle="rgba(230,215,190,.06)";g.lineWidth=1;for(let x=-W;x<W*2;x+=s*.16){g.beginPath();g.moveTo(x,floor);g.lineTo(ax+(x-ax)*3,H);g.stroke()}
   for(let i=0;i<40;i++){const x=r()*W,y=r()*floor*.8,R=1+r()*2;g.fillStyle=`rgba(255,230,190,${.04+r()*.1})`;g.beginPath();g.arc(x,y,R,0,7);g.fill()}
   const metal=x=>{const m=g.createLinearGradient(0,x-s*.02,0,x+s*.02);m.addColorStop(0,"#F1F3F4");m.addColorStop(.5,"#9AA2A8");m.addColorStop(1,"#5D6469");return m};
   // rack uprights with J-hooks
-  for(const sx of[-1,1]){const x=ax+sx*s*.36;g.fillStyle="#2B3532";g.fillRect(x-s*.022,ay-s*.38,s*.044,floor-(ay-s*.38));g.fillStyle="rgba(255,255,255,.08)";g.fillRect(x-s*.022,ay-s*.38,s*.01,floor-(ay-s*.38));
-    g.fillStyle="#3A4642";g.fillRect(x-s*.05,floor-s*.012,s*.1,s*.024);g.fillStyle="#C9CED3";g.fillRect(x-s*.03,ay+s*.012,s*.06,s*.018)}
+  for(const sx of[-1,1]){const x=ax+sx*s*.36;g.fillStyle="#2a2826";g.fillRect(x-s*.022,ay-s*.38,s*.044,floor-(ay-s*.38));g.fillStyle="rgba(255,255,255,.08)";g.fillRect(x-s*.022,ay-s*.38,s*.01,floor-(ay-s*.38));
+    g.fillStyle="#3a3734";g.fillRect(x-s*.05,floor-s*.012,s*.1,s*.024);g.fillStyle="#C9CED3";g.fillRect(x-s*.03,ay+s*.012,s*.06,s*.018)}
   // bar
   g.fillStyle=metal(ay);g.fillRect(ax-s*.72,ay-s*.011,s*1.44,s*.022);
   // plates
-  const plates=[[.62,.075,"#1F2A27"],[.5,.06,"#2E7D5B"],[.38,.05,"#1F2A27"]];
+  const plates=[[.62,.075,"#1b1a19"],[.5,.06,"#2c2a28"],[.38,.05,"#1b1a19"]];
   for(const sx of[-1,1]){let off=s*.47;
     for(const[hh,w,c]of plates){const x=ax+sx*off,ph=s*hh,pw=s*w;g.save();g.shadowColor="rgba(0,0,0,.5)";g.shadowBlur=s*.04;rrect(g,x-pw/2,ay-ph/2,pw,ph,pw*.35);g.fillStyle=c;g.fill();g.restore();
       g.strokeStyle="rgba(255,240,215,.28)";g.lineWidth=Math.max(1,s*.004);rrect(g,x-pw/2,ay-ph/2,pw,ph,pw*.35);g.stroke();
@@ -3080,9 +3080,9 @@ function drawGym(g,W,H){
     g.fillStyle="#B8BEC3";g.fillRect(ax+sx*s*.43-s*.012,ay-s*.035,s*.024,s*.07)}
   // dumbbell resting on the floor
   const dx=ax-s*.05,dy=floor-s*.05;g.fillStyle=metal(dy);g.fillRect(dx-s*.12,dy-s*.008,s*.24,s*.016);
-  for(const sx of[-1,1]){rrect(g,dx+sx*s*.13-s*.03,dy-s*.055,s*.06,s*.11,s*.02);g.fillStyle="#26302D";g.fill();g.strokeStyle="rgba(255,240,215,.22)";g.stroke()}
+  for(const sx of[-1,1]){rrect(g,dx+sx*s*.13-s*.03,dy-s*.055,s*.06,s*.11,s*.02);g.fillStyle="#24221f";g.fill();g.strokeStyle="rgba(255,240,215,.22)";g.stroke()}
   // soft reflection
-  g.globalAlpha=.12;g.fillStyle="#E8EDEA";g.fillRect(ax-s*.72,floor+(floor-ay)*.35,s*1.44,s*.01);g.globalAlpha=1;
+  g.globalAlpha=.12;g.fillStyle="#efe6d8";g.fillRect(ax-s*.72,floor+(floor-ay)*.35,s*1.44,s*.01);g.globalAlpha=1;
 }
 /* An open book under a lamp, with a speech bubble: reading and speaking practice */
 function drawTutor(g,W,H){
@@ -3284,7 +3284,7 @@ function drawCampus(g,W,H){const r=rng(91),hy=H*.72;
   g.fillStyle="#141822";g.fillRect(0,hy,W,H-hy);for(let i=0;i<14;i++){const x=r()*W,h=H*(.08+r()*.12);g.fillStyle="#0e1219";g.beginPath();g.ellipse(x,hy-h*.4,h*.45,h*.6,0,0,7);g.fill();g.fillRect(x-2,hy-h*.1,4,h*.1)}
   const ref=g.createLinearGradient(0,hy,0,H);ref.addColorStop(0,"rgba(246,197,140,.25)");ref.addColorStop(1,"rgba(0,0,0,0)");g.fillStyle=ref;g.fillRect(0,hy,W,H-hy);
 }
-const KN_KEY={fmgt:"94,107,255",econ:"47,191,122",poli:"255,138,76",gym:"62,194,138",tutor:"224,139,190",study:"255,213,138",exam:"255,92,112",campus:"255,179,107",ledger:"94,107,255",clock:"255,213,138",sunset:"255,150,110",pool:"80,200,255",soft:"90,150,255"};
+const KN_KEY={fmgt:"94,107,255",econ:"47,191,122",poli:"255,138,76",gym:"255,214,160",tutor:"224,139,190",study:"255,213,138",exam:"255,92,112",campus:"255,179,107",ledger:"94,107,255",clock:"255,213,138",sunset:"255,150,110",pool:"80,200,255",soft:"90,150,255"};
 let knNoise=null;function knGrain(){if(knNoise)return knNoise;const c=document.createElement("canvas");c.width=c.height=128;const x=c.getContext("2d"),d=x.createImageData(128,128);for(let i=0;i<d.data.length;i+=4){const v=Math.random()*255|0;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);return knNoise=c}
 function knFinish(g,W,H,name){const k=KN_KEY[name];g.save();
   if(k){const rim=g.createRadialGradient(W*.9,H*.05,0,W*.9,H*.05,Math.max(W,H)*.8);rim.addColorStop(0,`rgba(${k},.20)`);rim.addColorStop(1,`rgba(${k},0)`);g.globalCompositeOperation="screen";g.fillStyle=rim;g.fillRect(0,0,W,H)}
@@ -5715,5 +5715,41 @@ textarea:focus,.inp:focus,input:focus,select:focus{outline:0!important;border-co
 .empty{color:var(--muted)!important;font-size:15px!important;text-align:center;padding:26px 12px!important;border-radius:20px;background:var(--surface-2);line-height:1.5}
 .empty::before{content:"";display:block;width:36px;height:36px;margin:0 auto 10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9),rgba(255,255,255,0) 45%),linear-gradient(160deg,#c9cbd3,#8e9099);opacity:.6}
 
+</style>
+<style id="studio-css">
+/* ================= Studio pass: tidy, calm, precise ================= */
+:root{--k-gym:#7d8793}
+:root[data-theme="dark"]{--k-gym:#a3acb6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--k-gym:#a3acb6}}
+/* tab bar: clean white glass, quiet active pill */
+@media (max-width:640px){
+  .tabbar{background:rgba(255,255,255,.8)!important;border:.5px solid rgba(0,0,0,.08)!important;box-shadow:0 10px 30px rgba(0,0,0,.10),0 1px 2px rgba(0,0,0,.05)!important;padding:5px!important;border-radius:28px!important}
+  .tabbar button{color:#8e8e93!important;font-weight:500!important;gap:2px!important;border-radius:22px!important}
+  .tabbar button svg{stroke-width:1.8!important}
+  .tabbar button[aria-current="page"]{background:rgba(0,0,0,.055)!important;color:#1d1d1f!important}
+  :root[data-theme="dark"] .tabbar{background:rgba(28,28,30,.82)!important;border-color:rgba(255,255,255,.08)!important;box-shadow:0 10px 30px rgba(0,0,0,.5)!important}
+  :root[data-theme="dark"] .tabbar button{color:#8e8e93!important}
+  :root[data-theme="dark"] .tabbar button[aria-current="page"]{background:rgba(255,255,255,.12)!important;color:#fff!important}
+}
+@media (max-width:640px) and (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .tabbar{background:rgba(28,28,30,.82)!important;border-color:rgba(255,255,255,.08)!important}
+  :root:not([data-theme="light"]) .tabbar button[aria-current="page"]{background:rgba(255,255,255,.12)!important;color:#fff!important}}
+/* rhythm: one spacing scale, fewer words */
+@media (max-width:640px){
+  .page{gap:44px!important;padding-inline:18px!important}
+  #school{order:-3}
+  .shead{margin-bottom:16px!important}
+  .shead p{display:none}
+  #today>.shead{display:none}
+  .card,.fcard{padding:18px!important}
+  .foot-in>div:not(:first-child){display:none}
+  .foot-in{padding-block:32px 120px!important}
+  .figbar .fig{padding:16px 14px 16px 0!important}
+}
+/* hairlines and quiet borders */
+.card+.card{margin-top:0}
+hr,.sc-list li{border-color:var(--line-soft)!important}
+/* consistent icon weight */
+svg[viewBox="0 0 24 24"]{stroke-width:1.7}
 </style>
 </body></html>
