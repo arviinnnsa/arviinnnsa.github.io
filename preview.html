@@ -4989,8 +4989,9 @@ function render(){const box=document.getElementById("scBox");if(!box||!window.ST
   const nx=ups[0],bnLeft=diffDays(k,BN.due),due=dueList().length;
   const wg=h("div",{class:"sc-grid",style:"grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"});
   const wcard=(lbl,v,sub,on)=>h("button",{class:"sc-card lg press",style:"text-align:left;cursor:pointer;font:inherit;color:var(--lg-ink);border-radius:24px;padding:14px;display:block;width:100%;min-width:0",onclick:on},h("div",{class:"sc-lbl",style:"font-size:10px"},lbl),h("div",{style:"margin:8px 0 2px"},num(v,"sc-big",40)),h("div",{class:"sc-mute",style:"font-size:12px"},sub));
-  const w1=wcard("Next exam",nx?diffDays(k,nx.date):0,nx?nx.title.replace(" Midterm "," MT "):"None",()=>{exSel=nx&&nx.id;document.getElementById("scExam").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"})});
-  const w2=wcard("Review",due,due?"cards due":"all clear",()=>openReview());const w3=wcard("Today",minsToday(),"min studied",()=>pickFocus());
+  const wkMin=[0,1,2,3,4,5,6].reduce((a,i)=>{const f=S().focus[addDays(k,-i)]||{};return a+Object.values(f).reduce((x,y)=>x+y,0)},0);
+  const w1=wcard("This week",wkMin,"min studied",()=>pickFocus());
+  const w2=wcard("Review",due,due?"cards due":"all clear",()=>openReview());const soon=DUE.filter(([c,d])=>c!=="ALL"&&d>=k&&diffDays(k,d)<=7).length;const w3=wcard("Due",soon,"in 7 days",()=>{const r=document.querySelector(".sc-rad");if(r)r.scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"})});
   wg.append(w1,w2,w3);box.append(wg);
   const grid=h("div",{class:"sc-grid"});box.append(grid);
   // briefing note
@@ -5047,6 +5048,24 @@ window.SCHOOL={render,openLearn,openReview,openBrief,openMock,openAsk,startFocus
 render();setTimeout(render,1500);if(S().pill)runPill();setInterval(()=>{if(!sheetEl)render()},5*60*1000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!sheetEl)render()});
 })();
+
+/* ---------- polish: tabs, settings, motion ---------- */
+(()=>{
+  const hb=document.querySelector('#tabbar button[data-t="habits"]');if(hb)hb.remove();
+  const hs=document.getElementById("habits");if(hs)hs.dataset.tab="habits todo";
+  const tb=document.querySelector('#tabbar button[data-t="todo"]');if(tb)for(const n of [...tb.childNodes])if(n.nodeType===3&&n.textContent.trim())n.textContent="Me";
+  if(TAB==="habits")goTab("todo");else applyTab(false);
+  const addAp=()=>{const body=$("#shBody");if(!body||body.querySelector(".kn-appear"))return;const m=themeMode();const row=h("div",{class:"kn-appear",role:"group","aria-label":"Appearance"});
+    [["auto","Auto"],["light","Day"],["dark","Night"]].forEach(([k,t])=>row.append(h("button",{type:"button","aria-pressed":String(k===m),onclick:e=>{setTheme(k);row.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===e.currentTarget)))}},t)));
+    body.prepend(h("div",{style:"margin-bottom:18px"},h("div",{style:"font-weight:600;font-size:15px;margin-bottom:6px"},"Appearance"),row))};
+  ["#setBtn","#setBtn2"].forEach(sel=>{const b=$(sel);if(b)b.onclick=()=>{openSettings();addAp()}});
+  if(!reduce&&"IntersectionObserver"in window){
+    const io=new IntersectionObserver(es=>{for(const x of es)if(x.isIntersecting){x.target.classList.add("kn-in");io.unobserve(x.target)}},{rootMargin:"0px 0px -6% 0px"});
+    const arm=()=>document.querySelectorAll("main.page .card:not(.kn-rise),main.page .sc-card:not(.kn-rise),main.page .tile:not(.kn-rise),main.page .fcard:not(.kn-rise)").forEach(el=>{const r=el.getBoundingClientRect();if(r.height&&r.top>innerHeight){el.classList.add("kn-rise");io.observe(el)}});
+    let t=null;arm();new MutationObserver(()=>{clearTimeout(t);t=setTimeout(arm,150)}).observe(document.querySelector("main.page"),{childList:true,subtree:true});
+  }
+})();
+
 
 })();
 </script>
@@ -5506,6 +5525,66 @@ h3{letter-spacing:-.01em}
 }
 @media (max-width:640px) and (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tabbar{background:rgba(30,30,32,.72)!important}}
 .foot{background:#000}
+
+</style>
+<style id="polish-css">
+/* ================= Polish pass ================= */
+:root,:root[data-theme]{--mono:var(--font)}
+
+/* 1 · one type system: sentence-case labels, no small caps */
+.dbig .n small,.dm-h,.drow .dd small,.drow .sgo,.dtile .n small,.figbar .fig span,.fk,.hcap,.hcap .cgo,.hcount small,.hcount span,.intro .greet,.intro .leave,.kind,.prep span,.rc .rn,.rm-crumb,.rv-grid span,.sc-lbl,.sc-urg,.sl-k,.tabs button,.tile .code,.tile .feat .fk,.tile .more,.tile .spec dt,.tile .sx-go,.tile .sx-h,.tile .sx-r dt,.tl-now em,.tl30 .mk .ml,.wk-l,.wk-nums span,.rowlbl{
+  text-transform:none!important;letter-spacing:-.005em!important;font-weight:600!important;font-size:13.5px!important}
+.card h3,.tile h3{text-transform:none!important;letter-spacing:-.01em!important}
+.sc-lbl{color:var(--lg-ink)!important;font-size:15px!important}
+.intro .greet{font-size:15px!important;color:var(--kn-hero-mute)!important}
+
+html{overflow-x:clip}
+/* full-bleed bands without clipping (works on Mac and iPhone) */
+#hero,.hstage,#school>.sc-head{box-shadow:none!important;clip-path:none!important}
+#hero{border-image:linear-gradient(#000,#000) fill 0//0 100vmax}
+.hstage{border-image:linear-gradient(#000 0,#000 72%,var(--bg) 100%) fill 0//0 100vmax;background:none!important}
+@media (min-width:641px){#hero{border-image:none}}
+#school>.sc-head{position:relative;isolation:isolate}
+#school>.sc-head::after{content:"";position:absolute;top:0;bottom:0;left:calc(50% - 50vw);right:calc(50% - 50vw);z-index:-2;background:radial-gradient(40% 140% at 20% 0%,rgba(59,76,255,.6),transparent 70%),radial-gradient(35% 140% at 85% 30%,rgba(138,59,255,.5),transparent 70%),radial-gradient(45% 120% at 50% 130%,rgba(0,194,168,.4),transparent 70%),#000}
+
+/* 2 · tighter Today hero on iPhone */
+@media (max-width:640px){
+  #hero{padding-top:34px!important;padding-bottom:10px!important;margin-top:-8px}
+  .intro .cdp{margin-top:10px}
+  .intro .cta{margin-top:16px!important}
+  .hstage{margin-top:-24px!important;--pin:6vh}
+  #school>.sc-head,#todo>.shead,#tutoring>.shead{margin-top:-72px!important;padding-top:104px!important}
+  #schedule>.shead{margin-top:-20px!important;padding-top:52px!important}
+  .hero{margin-top:0!important}
+}
+
+/* 3 · calmer top bar on iPhone */
+@media (max-width:640px){#jumpBtn,#themeBtn{display:none!important}}
+.kn-appear{display:flex;gap:8px;margin:6px 0 2px}
+.kn-appear button{flex:1;height:40px;border-radius:20px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:500 14px var(--font)}
+.kn-appear button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* 4 · five tabs */
+@media (max-width:640px){.tabbar{grid-template-columns:repeat(5,1fr)!important}.tabbar button{font-size:11px!important}}
+
+/* 6 · a hero for every tab */
+#schedule>.shead,#todo>.shead,#tutoring>.shead,#work>.shead{position:relative;padding:40px 0 28px;margin-bottom:22px;isolation:isolate;
+  --ink:#f5f5f7;--muted:#a1a1a6;--line:#3a3a3c;--surface:#1c1c1e;--panel:#141416;color:#f5f5f7}
+#schedule>.shead::after{content:"";position:absolute;top:0;bottom:0;left:calc(50% - 50vw);right:calc(50% - 50vw);z-index:-2;background:radial-gradient(45% 140% at 85% 0%,rgba(120,130,160,.35),transparent 70%),linear-gradient(#000,#000)}
+#todo>.shead::after{content:"";position:absolute;top:0;bottom:0;left:calc(50% - 50vw);right:calc(50% - 50vw);z-index:-2;background:radial-gradient(40% 150% at 15% 110%,rgba(255,110,40,.55),transparent 70%),radial-gradient(30% 120% at 80% 0%,rgba(255,170,60,.35),transparent 70%),linear-gradient(#000,#000)}
+#tutoring>.shead::after{content:"";position:absolute;top:0;bottom:0;left:calc(50% - 50vw);right:calc(50% - 50vw);z-index:-2;background:radial-gradient(45% 140% at 80% 10%,rgba(214,120,170,.45),transparent 70%),radial-gradient(35% 120% at 10% 100%,rgba(240,200,140,.3),transparent 70%),linear-gradient(#000,#000)}
+#work>.shead::after{content:"";position:absolute;top:0;bottom:0;left:calc(50% - 50vw);right:calc(50% - 50vw);z-index:-2;background:repeating-radial-gradient(ellipse at 30% 40%,rgba(255,255,255,.07) 0 2px,transparent 2px 24px),linear-gradient(180deg,#0f6fa0,#063a66 70%,#03203a)}
+#schedule>.shead::before,#todo>.shead::before,#tutoring>.shead::before,#work>.shead::before{position:absolute;left:-6px;top:-8px;z-index:-1;font-size:clamp(96px,24vw,200px);font-weight:300;letter-spacing:-.05em;line-height:1;color:#fff;opacity:.07;pointer-events:none}
+#schedule>.shead::before{content:"Week"}#todo>.shead::before{content:"Me"}#tutoring>.shead::before{content:"Tutor"}#work>.shead::before{content:"Work"}
+#schedule>.shead .bt.secondary,#todo>.shead .bt.secondary,#tutoring>.shead .bt.secondary,#work>.shead .bt.secondary{border-color:rgba(255,255,255,.45)!important;color:#f5f5f7!important}
+#school>.sc-head h2,#schedule>.shead h2,#todo>.shead h2,#tutoring>.shead h2,#work>.shead h2{color:#f5f5f7}
+
+/* 7 · motion */
+.kn-rise{opacity:0;transform:translateY(18px) scale(.985)}
+.kn-in{opacity:1;transform:none;transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+@media (prefers-reduced-motion:reduce){.kn-rise{opacity:1;transform:none}}
+::view-transition-old(root){animation:knOut .22s ease both}::view-transition-new(root){animation:knIn .32s cubic-bezier(.22,1,.36,1) both}
+@keyframes knOut{to{opacity:0}}@keyframes knIn{from{opacity:0;transform:translateY(8px)}}
 
 </style>
 </body></html>
