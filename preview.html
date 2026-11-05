@@ -316,7 +316,7 @@ ul.fml li{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.82em;bac
 </script>
 
 </head><body>
-<div id="launch" aria-hidden="true"><div class="lw"><b>Arvin</b><span>Planner</span></div></div>
+<div id="launch" aria-hidden="true"><div class="lw"><b>Arvin</b></div></div>
 <script>(function(){var L=document.getElementById("launch"),sa=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches),seen=null;try{seen=sessionStorage.getItem("ap-launch")}catch(e){}
 if(!sa||seen){L.remove();return}try{sessionStorage.setItem("ap-launch","1")}catch(e){}
 var off=Math.max(0,(screen.height-innerHeight)/2);if(navigator.standalone===true&&off>0&&off<60)L.style.setProperty("--lt","calc(50% - "+off+"px)");
@@ -1280,7 +1280,7 @@ body{letter-spacing:-.011em}
 
 <header class="bar" id="bar">
   <div class="bar-in">
-    <p class="wordmark"><b>Arvin</b><span>Planner</span></p>
+    <p class="wordmark kn-wm" aria-label="Arvin"><b>Arvin</b></p>
     <nav class="topnav" aria-label="Jump to"><button data-go="hero">Today</button><button data-go="school">School</button><button data-go="cTitle">Courses</button><button data-go="dTitle">Exams</button><button data-go="schedule">Schedule</button><button data-go="wkTitle">Work</button><button data-go="habits">Habits</button><button data-go="tutoring">Tutoring</button></nav>
     <div class="today-lbl" id="todayLbl" hidden></div>
     <div class="hdr-r">
@@ -1371,7 +1371,7 @@ body{letter-spacing:-.011em}
 
 <footer class="foot">
   <div class="foot-in">
-    <div><p class="wordmark"><b>Arvin</b><span>Planner</span></p><p>Classes, Pedalheads shifts and deadlines, in one place.</p><button class="linkbtn" id="setBtn">Settings</button><button class="linkbtn" id="planWkBtn">Plan your week</button><button class="linkbtn" id="reviewBtn">Weekly review</button><button class="linkbtn" id="widgetBtn">Lock Screen widget</button></div>
+    <div><p class="wordmark kn-wm" aria-label="Arvin"><b>Arvin</b></p><p>Classes, Pedalheads shifts and deadlines, in one place.</p><button class="linkbtn" id="setBtn">Settings</button><button class="linkbtn" id="planWkBtn">Plan your week</button><button class="linkbtn" id="reviewBtn">Weekly review</button><button class="linkbtn" id="widgetBtn">Lock Screen widget</button></div>
     <div><h4>Colour key</h4><div class="legend" id="legend"></div></div>
     <div><h4>Google Calendar</h4><div class="sync" id="sync" data-s="idle"><i></i><span id="syncTxt">Copied from Google Calendar on Oct 26</span></div><button class="linkbtn" id="gset" hidden>Google connection settings</button></div>
     <div><h4>Shortcuts</h4><div class="keys"><span><kbd>←</kbd><kbd>→</kbd>Previous and next</span><span><kbd>T</kbd>Today</span><span><kbd>D</kbd><kbd>W</kbd><kbd>L</kbd>Day, week, list</span><span><kbd>N</kbd>Quick add</span><span><kbd>⌘</kbd><kbd>K</kbd>Quick add from anywhere</span><span>Drag an event to move it</span></div></div>
@@ -3592,6 +3592,15 @@ function examPrep(e){const c=(e.title.match(COURSE)||[])[1],C=c&&window.STUDY&&S
   return{course:c,done:list.filter(x=>chDone(x.id)).length,total:list.length,range:a===b?`Ch ${a}`:`Ch ${a}–${b}`}}
 const tone=dd=>Math.max(0,Math.min(1,1-dd/28));
 function prepBar(p){return h("div",{class:"prep"},h("div",{class:"pb"},h("i",{style:`width:${Math.round(p.done/p.total*100)}%`})),h("span",{},`${p.range} · ${p.done}/${p.total} studied`))}
+
+/* ---------- course + homework links on due dates ---------- */
+function kxCourse(e){const t=e.title||"",m=t.match(COURSE);if(m&&STUDY[m[1].toUpperCase()])return m[1].toUpperCase();if(/accounting|fmgt|horngren/i.test(t))return"FMGT";if(/econ|macro/i.test(t))return"ECON";if(/poli|briefing|government/i.test(t))return"POLI";return null}
+function kxLinks(e){ST.links=ST.links||{};const c=kxCourse(e),url=ST.links[e.id]||((e.desc||"").match(/https?:\/\/\S+/)||[])[0];
+  const wrap=h("div",{class:"kx",onclick:ev=>ev.stopPropagation()});
+  if(c)wrap.append(h("button",{class:"kx-c",style:`--kc:var(--k-${c.toLowerCase()})`,onclick:()=>openCourse(c)},h("i"),STUDY[c].code));
+  if(url)wrap.append(h("a",{class:"kx-l",href:url,target:"_blank",rel:"noopener"},"Open homework ↗"));
+  const edit=h("button",{class:"kx-e",onclick:()=>{const v=prompt("Paste the link to this homework or exam (Brightspace, MyLab…)",ST.links[e.id]||"");if(v===null)return;const u=v.trim();if(u&&!/^https?:\/\//i.test(u)){toast("Links need to start with https://");return}if(u)ST.links[e.id]=u;else delete ST.links[e.id];saveST();renderDeadlines()}},url?"Edit link":"+ Add link");
+  wrap.append(edit);return wrap}
 function renderDeadlines(){
   const n=nowParts(),box=$("#dgrid"),tl=$("#tl30");box.textContent="";tl.textContent="";
   const all=EV.filter(e=>["exam","due"].includes(classify(e).key)&&isAhead(e,n));const list=all.slice(0,8);
@@ -3615,13 +3624,13 @@ function renderDeadlines(){
       done?h("div",{class:"n"},"Done"):h("div",{class:"n tab"},dd===0?"Today":dd,dd===0?null:h("small",{},dd===1?"day":"days")),
       h("div",{class:"t"},clean(e.title).replace(/\s*\((\d.*?)\)\s*$/,"")),h("div",{class:"w"},when(e,c,k)),
       p?prepBar(p):null,
-      h("div",{class:"acts"},p?h("button",{class:"bt primary sm2",onclick:ev=>{ev.stopPropagation();openCourse(p.course)}},"Study now →"):null,h("button",{class:"bt secondary sm2",onclick:ev=>{ev.stopPropagation();openEvent(e)}},"Details")));
+      kxLinks(e),h("div",{class:"acts"},p?h("button",{class:"bt primary sm2",onclick:ev=>{ev.stopPropagation();openCourse(p.course)}},"Study now →"):null,h("button",{class:"bt secondary sm2",onclick:ev=>{ev.stopPropagation();openEvent(e)}},"Details")));
     const cb=mkDone(e);if(cb)tile.append(cb);box.append(tile)}
   const lst=h("div",{class:"dlist"});
   for(const e of rest){const c=classify(e),k=e.start.slice(0,10),dd=diffDays(n.key,k),done=isDone(e),t=tone(dd),p=c.key==="exam"?examPrep(e):null;
     const row=h("div",{class:`drow ${c.key}${done?" is-done":""}`,role:"button",tabindex:"0",onclick:()=>openEvent(e),onkeydown:ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();openEvent(e)}}},
       h("div",{class:"dd"+(t>.55||c.key==="exam"?" inv":""),style:`--t:${c.key==="exam"?100:Math.round(t*100)}%`},done?h("b",{},"✓"):h("b",{class:"tab"},dd===0?"0":dd),h("small",{},done?"done":dd===1?"day":"days")),
-      h("div",{class:"dm"},h("span",{class:"kind",style:`--kc:${c.c}`},c.label),h("div",{class:"t"},clean(e.title).replace(/\s*\((\d.*?)\)\s*$/,"")),h("div",{class:"w"},when(e,c,k)),p?prepBar(p):null),
+      h("div",{class:"dm"},h("span",{class:"kind",style:`--kc:${c.c}`},c.label),h("div",{class:"t"},clean(e.title).replace(/\s*\((\d.*?)\)\s*$/,"")),h("div",{class:"w"},when(e,c,k)),p?prepBar(p):null,kxLinks(e)),
       p?h("button",{class:"lnk sgo",onclick:ev=>{ev.stopPropagation();openCourse(p.course)}},"Study ›"):mkDone(e));
     lst.append(row)}
   if(rest.length)box.append(lst);
@@ -4396,7 +4405,7 @@ function renderToday(){
     inp.addEventListener("input",()=>{t3[i].t=inp.value;ST.top3[k]=t3;saveST()});
     const row=h("div",{class:"t3"+(it.done?" done":"")},h("span",{class:"num"},i+1),ckBtn(it.done,"Mark priority done",()=>{t3[i].done=!t3[i].done;ST.top3[k]=t3;saveST();renderToday()}),inp);top.append(row)});
   const doneN=t3.filter(x=>x.t&&x.done).length,setN=t3.filter(x=>x.t).length;
-  const topCard=h("div",{class:"card"},h("h3",{},"Top 3 for today",h("em",{},setN?`${doneN} of ${setN} done`:"Pick before you start")),top);
+  const topCard=h("div",{class:"card t3card"+(setN?" has":"")},h("h3",{},"Top 3 for today",h("em",{},setN?`${doneN} of ${setN} done`:"Pick before you start")),top);
   // to-dos due today
   const due=ST.todos.filter(t=>!t.done&&t.day&&t.day<=k).sort((a,b)=>a.day.localeCompare(b.day)),nod=ST.todos.filter(t=>!t.done&&!t.day).length;
   const tdl=h("div",{class:"tlist"});due.slice(0,6).forEach(t=>tdl.append(todoRow(t)));
@@ -4786,12 +4795,13 @@ function renderXfer(){const box=$("#xferBox");if(!box)return;box.textContent="";
   const done=ST.xfer.filter(x=>x.done).length,g=Object.values(ST.grades||{}).filter(v=>typeof v==="number");const avg=g.length?Math.round(g.reduce((a,b)=>a+b,0)/g.length*10)/10:null;
   const top=h("div",{class:"xf-top"},h("div",{class:"xf-prog"},ring(ST.xfer.length?done/ST.xfer.length*100:0,"var(--ink)"),h("span",{},h("b",{},`${done} of ${ST.xfer.length}`),h("small",{},"steps done"))),
     h("div",{class:"xf-prog"},h("b",{class:"xf-avg"},avg!=null?`${avg}%`:"—"),h("span",{},h("b",{},"Course average"),h("small",{},avg!=null?`From ${g.length} grade${g.length===1?"":"s"} you've entered`:"Add grades inside each course"))));
-  const ul=h("ul",{class:"xf-list"});
+  const ul=h("ul",{class:"xf-list"});const nxt=ST.xfer.find(x=>!x.done);
+  const peek=h("div",{class:"xf-next"},h("span",{},h("small",{},nxt?"Next step":"All steps done"),h("b",{},nxt?nxt.t:"Nice work")),h("button",{class:"bt secondary sm2",onclick:()=>{renderXfer.open=!renderXfer.open;renderXfer()}},renderXfer.open?"Hide steps":"All steps"));
   ST.xfer.forEach((x,i)=>{const cb=h("input",{type:"checkbox"});cb.checked=x.done;cb.onchange=()=>{x.done=cb.checked;saveST();renderXfer()};
     ul.append(h("li",{class:x.done?"on":""},h("label",{},cb,h("span",{},x.t)),h("button",{class:"xf-x","aria-label":`Remove ${x.t}`,onclick:()=>{ST.xfer.splice(i,1);saveST();renderXfer()}},"×")))});
   const inp=h("input",{class:"inp",placeholder:"Add a step, e.g. ask for a reference letter","aria-label":"Add a transfer step"});
   const add=()=>{const v=inp.value.trim();if(!v)return;ST.xfer.push({t:v,done:false});saveST();renderXfer()};inp.onkeydown=e=>{if(e.key==="Enter")add()};
-  box.append(h("div",{class:"card xf-card"},top,ul,h("div",{class:"xf-add"},inp,h("button",{class:"bt secondary",onclick:add},"Add"))))}
+  box.append(h("div",{class:"card xf-card"},top,peek,renderXfer.open?ul:null,renderXfer.open?h("div",{class:"xf-add"},inp,h("button",{class:"bt secondary",onclick:add},"Add")):null))}
 
 /* ---------- weekly review ---------- */
 function openReview(){const n=nowParts(),w=weekStart(n.key),wk=[...Array(7)].map((_,i)=>addDays(w,i));let cls=0,work=0,gym=0;
@@ -5148,6 +5158,11 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!sheetEl)
   btns.forEach(b=>{const t=document.getElementById(b.dataset.go);if(t){const sec=t.closest("section")||t;map.set(sec,b)}});
   const vis=new Map();const io=new IntersectionObserver(es=>{es.forEach(e=>vis.set(e.target,e.isIntersecting?e.intersectionRatio:0));let best=null,bv=0;vis.forEach((v,k)=>{if(v>bv){bv=v;best=k}});btns.forEach(b=>b.setAttribute("aria-current",String(!!best&&map.get(best)===b)))},{threshold:[0,.15,.3,.5]});
   map.forEach((b,sec)=>io.observe(sec))})();
+
+/* ---------- round 3: Pedalheads toggle ---------- */
+(()=>{const w=document.getElementById("work"),box=document.getElementById("workBox");if(!w||!box)return;
+  const t=h("button",{class:"kn-tog","aria-expanded":"false",onclick:()=>{const o=w.classList.toggle("kn-open");t.setAttribute("aria-expanded",String(o));t.querySelector("span").textContent=o?"Hide":"Show"}},"Shifts, pay and lesson notes",h("span",{},"Show"));
+  box.before(t)})();
 /* ---------- polish: tabs, settings, motion ---------- */
 (()=>{
   const hb=document.querySelector('#tabbar button[data-t="habits"]');if(hb)hb.remove();
@@ -5751,5 +5766,35 @@ textarea:focus,.inp:focus,input:focus,select:focus{outline:0!important;border-co
 hr,.sc-list li{border-color:var(--line-soft)!important}
 /* consistent icon weight */
 svg[viewBox="0 0 24 24"]{stroke-width:1.7}
+</style>
+<style id="focus-css">
+/* ================= Round 3: focus ================= */
+/* wordmark: ARVIN in spaced titanium */
+.kn-wm{letter-spacing:0!important;padding-left:0!important}
+.kn-wm b{font-weight:500!important;font-size:15px;letter-spacing:.55em;margin-right:-.55em;background:linear-gradient(180deg,#ffffff 20%,#9b9ba1);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.foot .kn-wm b{font-size:17px}
+#launch .lw b{letter-spacing:.55em;font-weight:500;background:linear-gradient(180deg,#fff 20%,#9b9ba1);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* first page: calmer hero */
+.intro h1{font-size:clamp(44px,12vw,56px)!important;letter-spacing:-.045em!important;font-weight:600!important}
+.intro .cta .bt.secondary{border:0!important;background:rgba(255,255,255,.1)!important}
+@media (max-width:640px){.t3card:not(.has){display:none!important}.figbar{border:0!important}}
+/* due dates: course + link chips */
+.kx{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.kx button,.kx a{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:15px;font-size:13px;font-weight:500;background:var(--surface);color:var(--ink)}
+.kx .kx-c i{width:7px;height:7px;border-radius:50%;background:var(--kc)}
+.kx .kx-l{background:#0071e3;color:#fff}
+.kx .kx-e{color:var(--muted);background:transparent;padding:0 6px}
+.dbig .kx button,.dbig .kx a:not(.kx-l){background:rgba(255,255,255,.12);color:inherit}
+/* UBC transfer: one line, details on demand */
+.xf-next{display:flex;align-items:center;gap:12px;padding:14px 0 2px;border-top:1px solid var(--line-soft)}
+.xf-next>span{flex:1;display:flex;flex-direction:column;gap:2px}.xf-next small{color:var(--muted);font-size:13px}.xf-next b{font-weight:600;font-size:16px}
+/* Pedalheads: tucked away until asked */
+#work:not(.kn-open) #workBox{display:none}
+.kn-tog{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;box-sizing:border-box;padding:16px 18px;border-radius:20px;background:var(--panel);font-weight:500;font-size:15px}
+.kn-tog span{color:var(--muted);font-weight:400}
+/* to-do + habits: compact */
+.habits{gap:10px!important}
+.habits .card,.habits>*{padding:14px 16px!important}
+#todoBox{gap:10px!important}
 </style>
 </body></html>
