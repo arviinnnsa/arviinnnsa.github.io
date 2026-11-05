@@ -5004,14 +5004,14 @@ function render(){const box=document.getElementById("scBox");if(!box||!window.ST
   if(ex){const r=examReady(ex),left=diffDays(k,ex.date),chips=h("div",{style:"display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px"});
     exams.forEach(e=>chips.append(h("button",{class:"sc-chip","aria-pressed":String(e.id===ex.id),onclick:()=>{exSel=e.id;render()}},e.course)));
     const chs=h("div",{class:"sc-chs"}),bars=[];ex.chs.forEach(id=>{const c=chap(id);if(!c)return;const v=ready(id),b=h("i");bars.push([b,v]);
-      const row=h("button",{class:"sc-ch",style:"all:unset;display:grid;grid-template-columns:62px 1fr 40px;align-items:center;gap:10px;font-size:13px;cursor:pointer",onclick:()=>openLearn(id),title:"Learn "+c.ch.title},h("span",{},c.ch.num),h("div",{class:"sc-bar"},b),h("span",{class:"sc-mute",style:"text-align:right"},Math.round(v*100)+"%"));longPress(row,chMenu(c.course,id));chs.append(row)});
+      const row=h("button",{class:"sc-ch",style:"all:unset;display:grid;grid-template-columns:62px 1fr 40px;align-items:center;gap:10px;font-size:13px;cursor:pointer",onclick:()=>openLearn(id),title:"Learn "+c.ch.title},h("span",{},c.ch.num),h("div",{class:"sc-bar"},b),h("span",{class:"sc-mute",style:"text-align:right"},v?Math.round(v*100)+"%":"New"));longPress(row,chMenu(c.course,id));chs.append(row)});
     const weak=ex.chs.map(id=>[id,ready(id)]).filter(([id])=>chap(id)&&chap(id).ch.date<=addDays(k,3)).sort((a,b)=>a[1]-b[1]);
     const plan=h("ul",{class:"sc-list"}),add=(mins,t,sub,f)=>plan.append(h("li",{},h("button",{class:"sc-li press",onclick:f},h("span",{class:"sc-big",style:"font-size:24px;width:46px"},String(mins),h("small",{style:"font-size:11px"},"m")),h("span",{class:"sc-sp"},h("span",{class:"sc-t",style:"display:block"},t),h("span",{class:"sc-mute"},sub)),ic("arrow"))));
     if(weak[0]){const c=chap(weak[0][0]);add(35,`Learn · ${c.ch.num}`,weak[0][1]<.5?"Your weakest chapter":"Lowest readiness",()=>openLearn(weak[0][0]))}
     if(due)add(Math.max(5,Math.min(20,due)),"Review queue",`${due} cards due`,()=>openReview());
     if(weak[1]){const c=chap(weak[1][0]);add(20,`Practice · ${c.ch.num}`,"Worked problems",()=>room(c.course,weak[1][0],"practice"))}
     if(left<=10)add(Math.max(10,Math.round(Math.min(20,ex.chs.length*5)*1.5)),"Mock exam","Timed, built from your quizzes",()=>openMock(ex));
-    const rd=h("div",{style:"text-align:right"},num(Math.round(r*100),"sc-big",40,v=>Math.round(v)+"%"),h("div",{class:"sc-mute"},"ready"));
+    const rd=r?h("div",{style:"text-align:right"},num(Math.round(r*100),"sc-big",40,v=>Math.round(v)+"%"),h("div",{class:"sc-mute"},"ready")):h("div",{style:"text-align:right"},h("div",{class:"sc-t"},"Not started"),h("div",{class:"sc-mute"},"Tap Start"));
     grid.append(h("div",{class:"sc-card lg sc-enter",id:"scExam"},h("div",{class:"sc-row"},h("span",{class:"sc-lbl"},"Exam mode"),h("span",{class:"sc-sp"}),h("span",{class:"sc-mute"},ex.w)),chips,
       h("div",{class:"sc-t",style:"margin-top:8px"},`${ex.title} · ${shortDate(ex.date)}`),h("div",{class:"sc-mute"},ex.label),
       h("div",{class:"sc-row",style:"margin-top:10px;align-items:flex-end"},h("div",{},num(left,"sc-big",68),h("span",{style:"font-size:18px;font-weight:300;margin-left:6px"},left===1?"day":"days")),h("span",{class:"sc-sp"}),rd),chs,
@@ -5028,7 +5028,7 @@ function render(){const box=document.getElementById("scBox");if(!box||!window.ST
   grid.append(h("div",{class:"sc-card lg sc-enter"},h("div",{class:"sc-row",style:"margin-bottom:6px"},h("span",{class:"sc-lbl"},"Courses"),h("span",{class:"sc-sp"}),h("span",{class:"sc-mute"},"Tap to open · rings fill as chapters get solid")),rings));
   // this week
   const wk=h("ul",{class:"sc-list"});Object.keys(SC_C).forEach(c=>STUDY[c].chapters.filter(x=>!x.assignment&&diffDays(x.date,k)>=-6&&diffDays(x.date,k)<=7).forEach(x=>{
-    const v=ready(x.id),row=h("button",{class:"sc-li press",onclick:()=>openLearn(x.id)},h("span",{class:"sc-dot",style:`background:${SC_C[c]}`}),h("span",{class:"sc-sp"},h("span",{class:"sc-t",style:"display:block"},`${c} ${x.num} · ${x.title}`),h("span",{class:"sc-mute"},(x.date>k?"Preview · class "+shortDate(x.date):"This week")+(x.pending?" · slides not posted yet":""))),h("span",{class:"sc-mute"},Math.round(v*100)+"%"),ic("arrow"));
+    const v=ready(x.id),row=h("button",{class:"sc-li press",onclick:()=>openLearn(x.id)},h("span",{class:"sc-dot",style:`background:${SC_C[c]}`}),h("span",{class:"sc-sp"},h("span",{class:"sc-t",style:"display:block"},`${c} ${x.num} · ${x.title}`),h("span",{class:"sc-mute"},(x.date>k?"Preview · class "+shortDate(x.date):"This week")+(x.pending?" · slides not posted yet":""))),h("span",{class:"sc-mute"},v?Math.round(v*100)+"%":"New"),ic("arrow"));
     longPress(row,chMenu(c,x.id));wk.append(h("li",{},row))}));
   grid.append(h("div",{class:"sc-card lg sc-enter"},h("div",{class:"sc-row"},h("span",{class:"sc-lbl"},"This week's chapters"),h("span",{class:"sc-sp"}),h("span",{class:"sc-mute"},"Hold for more")),wk));
   // deadline radar
@@ -5423,6 +5423,89 @@ header.bar{height:auto;overflow:visible;border-radius:0;background:color-mix(in 
   .sc-aura i,.sc-enter,.sc-ring.closed svg,.sc-menu,.sc-shimmer{animation:none!important}
   .sc-sheet,.sc-qcard,#scPill,.tabbar,.sc-bar i,.sc-ring .val{transition-duration:.01s!important}
 }
+
+</style>
+<style id="keynote-css">
+/* ================= Keynote theme: black hero, light Apple-grey page, dark at night ================= */
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Hanken Grotesk","Helvetica Neue",system-ui,sans-serif;
+  --bg:#f5f5f7; --surface:#e8e8ed; --surface-2:#ffffff; --ink:#1d1d1f; --muted:#6e6e73; --faint:#86868b;
+  --line:#d2d2d7; --line-soft:#e8e8ed; --panel:#ffffff; --btn:#1d1d1f; --btn-ink:#ffffff; --focus:#0071e3;
+  --r-md:14px; --r-lg:24px; --kn-blue:#0071e3; --kn-hero:#000; --kn-hero-ink:#f5f5f7; --kn-hero-mute:#a1a1a6;
+  --lg-fill:rgba(255,255,255,.92); --lg-fill-2:rgba(255,255,255,.9); --lg-edge:rgba(0,0,0,.04);
+  --lg-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.05); --lg-solid:#fff; --lg-ink:#1d1d1f; --lg-mute:#6e6e73; --lg-line:#e8e8ed;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#000; --surface:#1c1c1e; --surface-2:#141416; --ink:#f5f5f7; --muted:#a1a1a6; --faint:#6e6e73;
+  --line:#2c2c2e; --line-soft:#1c1c1e; --panel:#141416; --btn:#f5f5f7; --btn-ink:#000; --focus:#2997ff;
+  --lg-fill:rgba(28,28,30,.9); --lg-fill-2:rgba(28,28,30,.92); --lg-edge:rgba(255,255,255,.06); --lg-shadow:none; --lg-solid:#1c1c1e; --lg-ink:#f5f5f7; --lg-mute:#a1a1a6; --lg-line:#2c2c2e}}
+:root[data-theme="dark"]{
+  --bg:#000; --surface:#1c1c1e; --surface-2:#141416; --ink:#f5f5f7; --muted:#a1a1a6; --faint:#6e6e73;
+  --line:#2c2c2e; --line-soft:#1c1c1e; --panel:#141416; --btn:#f5f5f7; --btn-ink:#000; --focus:#2997ff;
+  --lg-fill:rgba(28,28,30,.9); --lg-fill-2:rgba(28,28,30,.92); --lg-edge:rgba(255,255,255,.06); --lg-shadow:none; --lg-solid:#1c1c1e; --lg-ink:#f5f5f7; --lg-mute:#a1a1a6; --lg-line:#2c2c2e}
+
+body{font-family:var(--font);-webkit-font-smoothing:antialiased;letter-spacing:-.003em}
+#launch{background:#000}#launch .lw b{color:#f5f5f7}#launch .lw span{color:#a1a1a6}
+
+/* top bar: always black glass */
+.bar{background:rgba(0,0,0,.82)!important;color:#f5f5f7}
+.bar .wordmark{color:#f5f5f7}
+.bar .icon{color:#f5f5f7}.bar .icon:hover{background:rgba(255,255,255,.12)}
+.topnav{gap:6px}
+.topnav button{color:#f5f5f7!important;text-transform:none!important;letter-spacing:0!important;font-size:13.5px!important;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.1)}
+.topnav button:hover{background:rgba(255,255,255,.2)}
+
+/* black hero band (Today) */
+#hero,.hstage,#school>.sc-head{background:var(--kn-hero);box-shadow:0 0 0 100vmax var(--kn-hero);clip-path:inset(0 -100vmax)}
+.intro{color:var(--kn-hero-ink);padding-bottom:28px!important}
+#hero,.hstage,#school>.sc-head{--ink:#f5f5f7;--muted:#a1a1a6;--faint:#86868b;--line:#3a3a3c;--line-soft:#2c2c2e;--surface:#1c1c1e;--surface-2:#141416;--panel:#141416;--btn:#f5f5f7;--btn-ink:#000;color:var(--ink)}
+.intro h1{font-weight:600!important;letter-spacing:-.035em!important}
+.intro .greet,.intro .when{color:var(--kn-hero-mute)!important}
+.intro .bt.secondary{border-color:rgba(255,255,255,.5)!important;color:#f5f5f7!important}
+.intro .bt.primary{background:var(--kn-blue)!important;border-color:var(--kn-blue)!important;color:#fff!important}
+.hstage{padding-top:4px}
+#hero .cdp{background:rgba(255,255,255,.12)!important;color:#f5f5f7!important}
+@media (min-width:641px){#hero{position:relative;z-index:2;background:none!important;box-shadow:none!important;clip-path:none!important}}
+.hero{border-radius:28px!important}
+
+/* type */
+.shead h2,.sc-head h2{font-weight:600!important;letter-spacing:-.03em!important;font-size:clamp(32px,4.4vw,56px)!important;line-height:1.05!important}
+.shead p{color:var(--muted)}
+h3{letter-spacing:-.01em}
+
+/* buttons: Apple pills */
+.bt,.qadd .bt,.hero .cta .bt{border-radius:999px!important;text-transform:none!important;letter-spacing:0!important;font-size:15px!important;font-weight:500!important;padding:11px 20px!important}
+.icon{border-radius:999px}
+.arrow{border:0!important;background:var(--surface)!important;color:var(--ink)}
+
+/* cards */
+.card,.fcard{border:0!important;box-shadow:none!important;border-radius:24px!important;background:var(--panel)}
+.tile .art{border-radius:24px!important}
+
+/* School section: black hero with aurora glow, light cards below */
+#school{padding-top:0}
+#school>.sc-aura{position:relative;inset:auto;height:0;z-index:0}
+#school>.sc-head{padding:46px 0 34px;margin-bottom:22px;color:#f5f5f7;position:relative;overflow:visible;
+  background:radial-gradient(60% 120% at 15% 0%,rgba(59,76,255,.55),transparent 70%),radial-gradient(50% 120% at 90% 30%,rgba(138,59,255,.45),transparent 70%),radial-gradient(60% 100% at 50% 120%,rgba(0,194,168,.35),transparent 70%),#000}
+#school>.sc-head h2{color:#f5f5f7}
+#school>.sc-head p{color:#a1a1a6!important}
+#school .sc-giant{color:#fff;opacity:.07}
+#school .sc-card.lg::before{display:none}
+#school .sc-card.lg{backdrop-filter:none;-webkit-backdrop-filter:none}
+#school .sc-btn:not(.ghost){background:var(--kn-blue);color:#fff}
+#school .sc-chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+#school .sc-rad>.lg{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--lg-solid)}
+.sc-sheet{background:var(--lg-fill-2)}
+
+/* floating tab bar stays glass */
+@media (max-width:640px){
+  .tabbar{background:rgba(250,250,252,.72)!important}
+  :root[data-theme="dark"] .tabbar{background:rgba(30,30,32,.72)!important}
+  .tabbar button[aria-current="page"]{background:var(--ink)!important;color:var(--bg)!important}
+  .intro h1{font-size:clamp(36px,10.5vw,46px)!important}
+}
+@media (max-width:640px) and (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tabbar{background:rgba(30,30,32,.72)!important}}
+.foot{background:#000}
 
 </style>
 </body></html>
