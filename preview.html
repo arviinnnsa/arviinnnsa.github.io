@@ -316,7 +316,7 @@ ul.fml li{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.82em;bac
 </script>
 
 </head><body>
-<div id="launch" aria-hidden="true"><div class="ag-l-glow"></div><div class="ag-l-stage"><svg class="ag-l-mark" viewBox="0 0 200 200"><defs><linearGradient id="agLg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9bac0"/></linearGradient></defs><path class="ag-l-base" d="M150 164 L113.5 40 Q109 27 104.5 40 L86 97 C79 120 70 146 54 154 C40 161 32 148 41 138 C60 118 118 115 166 136"/><path class="ag-l-shine" pathLength="100" d="M150 164 L113.5 40 Q109 27 104.5 40 L86 97 C79 120 70 146 54 154 C40 161 32 148 41 138 C60 118 118 115 166 136"/></svg><div class="ag-l-name"><span>A</span><span>r</span><span>v</span><span>i</span><span>n</span><i class="ag-l-caret"></i></div></div></div>
+<div id="launch" aria-hidden="true"><div class="ag-l-glow"></div><div class="ag-l-stage"><div class="ag-l-name"><span>A</span><span>R</span><span>V</span><span>I</span><span>N</span><i class="ag-l-caret"></i><b class="ag-l-sheen" aria-hidden="true">ARVIN</b></div></div></div>
 <script>(function(){var L=document.getElementById("launch"),sa=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches),seen=null;try{seen=sessionStorage.getItem("ap-launch")}catch(e){}
 if(!sa||seen){L.remove();return}try{sessionStorage.setItem("ap-launch","1")}catch(e){}
 var off=Math.max(0,(screen.height-innerHeight)/2);if(navigator.standalone===true&&off>0&&off<60)L.style.setProperty("--lt","calc(50% - "+off+"px)");
@@ -327,13 +327,13 @@ var cr=L.querySelector(".ag-l-caret"),sp=L.querySelectorAll(".ag-l-name span");
 function at(ms,fn){setTimeout(fn,ms)}
 function caret(i){if(!cr||!sp[0])return;cr.style.left=(i<0?sp[0].offsetLeft-4:sp[i].offsetLeft+sp[i].offsetWidth*.6)+"px"}
 requestAnimationFrame(function(){requestAnimationFrame(function(){
-  if(rm){L.classList.add("ag-up");for(var k=0;k<sp.length;k++)sp[k].classList.add("on");at(500,function(){seq=true;go()});return}
+  if(rm){for(var k=0;k<sp.length;k++)sp[k].classList.add("on");at(500,function(){seq=true;go()});return}
   L.classList.add("ag-play");caret(-1);
-  at(500,function(){L.classList.add("ag-up")});
-  at(760,function(){cr&&cr.classList.add("on")});
-  for(var q=0;q<sp.length;q++)(function(i){at(900+125*i,function(){sp[i].classList.add("on");caret(i)})})(q);
-  at(900+125*sp.length+500,function(){cr&&cr.classList.remove("on")});
-  at(900+125*sp.length+900,function(){seq=true;go()});
+  at(250,function(){cr&&cr.classList.add("on")});
+  for(var q=0;q<sp.length;q++)(function(i){at(520+150*i,function(){sp[i].classList.add("on");caret(i)})})(q);
+  var end=520+150*sp.length;
+  at(end+350,function(){cr&&cr.classList.remove("on");L.classList.add("ag-sheen")});
+  at(end+1700,function(){seq=true;go()});
 })});
 })();</script>
 <title>Arvin's Planner</title>
@@ -5816,29 +5816,27 @@ svg[viewBox="0 0 24 24"]{stroke-width:1.7}
 <style id="arvin-launch-css">
 #launch{background:#000!important;overflow:hidden}
 #launch .lw{display:none}
-.ag-l-glow{position:absolute;left:50%;top:var(--lt,50%);width:120vmax;height:120vmax;transform:translate(-50%,-50%) scale(.85);pointer-events:none;opacity:0;transition:opacity 1.6s ease,transform 2.4s cubic-bezier(.22,1,.36,1);
-  background:radial-gradient(16vmax 16vmax at 45% 47%,rgba(74,123,255,.22),transparent 70%),radial-gradient(14vmax 14vmax at 57% 55%,rgba(255,122,82,.14),transparent 70%)}
+.ag-l-glow{position:absolute;left:50%;top:var(--lt,50%);width:120vmax;height:120vmax;transform:translate(-50%,-50%) scale(.85);pointer-events:none;opacity:0;transition:opacity 1.8s ease,transform 2.6s cubic-bezier(.22,1,.36,1);
+  background:radial-gradient(22vmax 9vmax at 46% 50%,rgba(74,123,255,.20),transparent 70%),radial-gradient(18vmax 8vmax at 56% 52%,rgba(255,122,82,.12),transparent 70%)}
 #launch.ag-play .ag-l-glow{opacity:1;transform:translate(-50%,-50%) scale(1)}
-.ag-l-stage{position:absolute;left:0;right:0;top:var(--lt,50%);height:0;transition:transform .7s cubic-bezier(.22,1,.36,1)}
-.ag-l-mark{position:absolute;left:50%;top:0;width:112px;height:112px;margin:-56px 0 0 -56px;overflow:visible;transition:transform .9s cubic-bezier(.34,1.35,.64,1)}
-#launch.ag-up .ag-l-mark{transform:translateY(-34px) scale(.78)}
-.ag-l-mark path{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:9}
-.ag-l-base{stroke:url(#agLg)}
-.ag-l-shine{stroke:#fff;stroke-width:9.5;stroke-dasharray:0 100;opacity:0;filter:drop-shadow(0 0 6px rgba(150,180,255,.9))}
-#launch.ag-play .ag-l-shine{animation:agLShine 1.1s cubic-bezier(.45,0,.2,1) both}
-@keyframes agLShine{0%{opacity:1;stroke-dasharray:0 100;stroke-dashoffset:0}60%{opacity:1;stroke-dasharray:22 100;stroke-dashoffset:-60}100%{opacity:0;stroke-dasharray:4 100;stroke-dashoffset:-100}}
-.ag-l-name{position:absolute;left:0;right:0;top:44px;display:flex;justify-content:center;align-items:center;
-  font:500 17px/1 Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;letter-spacing:.55em;text-transform:uppercase;padding-left:.55em}
-.ag-l-name span{display:inline-block;opacity:0;transform:translateY(8px);filter:blur(6px);transition:opacity .42s cubic-bezier(.22,1,.36,1),transform .42s cubic-bezier(.22,1,.36,1),filter .42s;
-  background:linear-gradient(180deg,#fff 20%,#9b9ba1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ag-l-stage{position:absolute;left:0;right:0;top:var(--lt,50%);height:0;transition:transform .8s cubic-bezier(.22,1,.36,1),filter .8s}
+.ag-l-name{position:absolute;left:0;right:0;top:-14px;height:28px;display:flex;justify-content:center;align-items:center;overflow:visible;
+  font:400 26px/1 Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;letter-spacing:.62em;padding-left:.62em;font-feature-settings:"ss01","cv11"}
+.ag-l-name span{display:inline-block;opacity:0;transform:translateY(10px);filter:blur(8px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.34,1.4,.64,1),filter .5s;
+  background:linear-gradient(180deg,#ffffff 15%,#c9cad0 60%,#8e8f96);-webkit-background-clip:text;background-clip:text;color:transparent}
 .ag-l-name span.on{opacity:1;transform:none;filter:none}
-.ag-l-caret{position:absolute;left:0;top:-2px;width:1.5px;height:20px;background:#f5f5f7;opacity:0;border-radius:1px;transition:left .12s cubic-bezier(.22,1,.36,1),opacity .2s}
+.ag-l-caret{position:absolute;left:0;top:0;width:1.5px;height:28px;background:#f5f5f7;opacity:0;border-radius:1px;transition:left .14s cubic-bezier(.22,1,.36,1),opacity .25s}
 .ag-l-caret.on{opacity:1;animation:agLBlink .9s steps(1) infinite}
 @keyframes agLBlink{50%{opacity:0}}
+.ag-l-sheen{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;padding-left:.62em;font:inherit;letter-spacing:inherit;pointer-events:none;
+  color:transparent;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.95) 50%,transparent 58%) no-repeat;background-size:300% 100%;background-position:120% 0;-webkit-background-clip:text;background-clip:text;opacity:0}
+#launch.ag-sheen .ag-l-sheen{animation:agLSheen 1.1s cubic-bezier(.45,0,.2,1) both}
+@keyframes agLSheen{0%{opacity:1;background-position:120% 0}100%{opacity:1;background-position:-20% 0}}
 #launch.out{opacity:0!important;transition:opacity .6s ease!important}
-#launch.out .ag-l-stage{transform:scale(1.06)}
+#launch.out .ag-l-stage{transform:scale(1.04);filter:blur(2px)}
 @media (prefers-reduced-motion:reduce){#launch *{transition:none!important;animation:none!important}}
 </style>
+
 
 <style id="arvin-glass-css">
 /* ================= Arvin Glass: white frosted glass, thin numbers, glow, night mode ================= */
@@ -5989,7 +5987,9 @@ main.page{position:relative;z-index:0}
 .arow{border-radius:14px!important}
 
 
-.kn-wm{display:inline-flex!important;align-items:center;gap:12px}.ag-wm-mark{width:22px;height:22px;flex:none;overflow:visible}.ag-wm-mark path{fill:none;stroke:#e9e9ee;stroke-width:11;stroke-linecap:round;stroke-linejoin:round}
+.kn-wm b{font-family:var(--ag-font)!important;font-weight:400!important;letter-spacing:.62em!important;margin-right:-.62em;font-size:16px;background:linear-gradient(180deg,#ffffff 15%,#c9cad0 60%,#8e8f96)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;transition:filter .3s}
+.kn-wm:hover b{filter:drop-shadow(0 0 10px rgba(150,180,255,.35))}
+.foot .kn-wm b{font-size:18px}
 /* schedule fixes */
 .dayhead .dh.today .dd{background:none!important;color:var(--ag-accent)!important;width:auto!important}
 .ev .wmark{top:auto!important;bottom:6px!important;right:6px!important;padding:2px 7px;border-radius:999px;background:color-mix(in srgb,var(--warn) 16%,var(--ag-surface));font-size:10.5px!important}
@@ -6029,9 +6029,6 @@ textarea:focus,.inp:focus,input:focus,select:focus{border-color:var(--ag-accent)
 (function(){
   var root=document.documentElement,reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* the A mark beside the wordmark */
-  document.querySelectorAll(".kn-wm").forEach(function(w){if(w.querySelector(".ag-wm-mark"))return;var NS="http://www.w3.org/2000/svg",sv=document.createElementNS(NS,"svg");sv.setAttribute("viewBox","0 0 200 200");sv.setAttribute("class","ag-wm-mark");sv.setAttribute("aria-hidden","true");
-    var pa=document.createElementNS(NS,"path");pa.setAttribute("d","M150 164 L113.5 40 Q109 27 104.5 40 L86 97 C79 120 70 146 54 154 C40 161 32 148 41 138 C60 118 118 115 166 136");sv.appendChild(pa);w.prepend(sv)});
   /* glass strength: Clear / Tinted */
   function glassMode(){try{return localStorage.getItem("ap-glass")||(matchMedia("(prefers-reduced-transparency: reduce)").matches?"tinted":"clear")}catch(e){return"clear"}}
   function applyGlass(){root.setAttribute("data-glass",glassMode())}
