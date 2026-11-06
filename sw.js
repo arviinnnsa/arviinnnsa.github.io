@@ -3,15 +3,15 @@
    - Opening the app: tries the network for up to 2.5 s, then shows the saved copy,
      so a weak signal never leaves you on a blank screen.
    - Icons, splash screens: served instantly from the device, refreshed in the background.
-   - Hanken Grotesk font: saved on the device so the app looks the same offline.
+   - Inter font: saved on the device so the app looks the same offline.
    - Google Calendar, sign-in and weather requests are never cached here
      (the app keeps its own saved copy of your events). */
-const VERSION = "ap-v7";
+const VERSION = "ap-v8";
 const SHELL = VERSION + "-shell";
-const FONTS = "ap-fonts-v1";
-const FONT_CSS = "https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&display=swap";
+const FONTS = "ap-fonts-v2";
+const FONT_CSS = "https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap";
 const SPLASH = ["640x1136","750x1334","828x1792","1125x2436","1170x2532","1179x2556","1206x2622",
-  "1242x2688","1260x2736","1284x2778","1290x2796","1320x2868"].map(s => "splash-" + s + ".png");
+  "1242x2688","1260x2736","1284x2778","1290x2796","1320x2868"].map(s => "splash-ag-" + s + ".png");
 const CORE = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png",
   "icon-maskable-512.png", "apple-touch-icon.png", "favicon-48.png", "favicon.ico", ...SPLASH];
 const NAV_TIMEOUT = 2500;
