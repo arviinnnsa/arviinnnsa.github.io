@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Planner">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
@@ -4671,11 +4671,11 @@ async function moveEvent(e,k,s,en){
   catch(err){e.start=was.start;e.end=was.end;refresh();syncLabel?.();toast(err?.code==="none"?"Moving events works when Google Calendar is connected":err?.code==="needs_reauth"||err?.code==="auth"?"Sign in to Google again, then try":"Couldn't move it in Google Calendar. Try again.")}}
 
 /* ---------- tabs (iPhone) and swipe ---------- */
-let TAB=(()=>{try{const t=sessionStorage.getItem("ap-tab");return ["today","week","school","exams","tutor","todo"].includes(t)?t:"today"}catch(e){return "today"}})();
-function goTab(t){if(t==="habits")t="todo";TAB=t;applyTab(true);scrollTo({top:0,behavior:"auto"});if(t==="week")setTimeout(()=>{try{render()}catch(e){}},30)}window.goTab=goTab;
+let TAB=(()=>{try{const t=localStorage.getItem("ap-tab");return ["today","week","school","exams","tutor","todo"].includes(t)?t:"today"}catch(e){return "today"}})();
+function goTab(t){if(t==="habits")t="todo";TAB=t;applyTab(true);scrollTo({top:0,behavior:"auto"});if(t==="week")setTimeout(()=>{try{render()}catch(e){}},30)}window.goTab=goTab;window.apSync=async()=>{try{if(SITE)await siteSync();else await nativeSync()}catch(e){}try{render()}catch(e){}};
 function applyTab(anim){const nw=narrow();
   document.querySelectorAll("[data-tab]").forEach(el=>{const on=el.dataset.tab.split(" ").includes(TAB);el.classList.toggle("off",!on);if(on&&anim){el.classList.remove("enter");void el.offsetWidth;el.classList.add("enter")}});
-  document.querySelectorAll("#tabbar button").forEach(b=>b.setAttribute("aria-current",b.dataset.t===TAB?"page":"false"));document.querySelectorAll(".topnav button[data-t]").forEach(b=>b.setAttribute("aria-current",String(b.dataset.t===TAB)));document.documentElement.dataset.apTab=TAB;try{sessionStorage.setItem("ap-tab",TAB)}catch(e){}
+  document.querySelectorAll("#tabbar button").forEach(b=>b.setAttribute("aria-current",b.dataset.t===TAB?"page":"false"));document.querySelectorAll(".topnav button[data-t]").forEach(b=>b.setAttribute("aria-current",String(b.dataset.t===TAB)));document.documentElement.dataset.apTab=TAB;try{localStorage.setItem("ap-tab",TAB)}catch(e){}
   const late=ST.todos.filter(t=>!t.done&&t.day&&t.day<=nowParts().key).length,bd=$("#todoBadge");if(bd){bd.textContent=late;bd.hidden=!late}}
 function setTint(){const m=nowParts().min,t=m<5*60?"night":m<9*60+30?"dawn":m<16*60+30?"day":m<19*60+30?"dusk":"night";$(".hero").dataset.tod=t}
 (()=>{let x0=null,y0=0;const cal=$("#cal");
@@ -4721,7 +4721,7 @@ function applyTheme(){const m=themeMode(),r=document.documentElement;let d=null;
   if(m==="dark")d="dark";else if(m==="light")d="light";else if(isNightNow())d="dark";
   const was=r.getAttribute("data-theme");if(d)r.setAttribute("data-theme",d);else r.removeAttribute("data-theme");
   const b=$("#themeBtn");if(b){b.dataset.m=m;b.setAttribute("aria-label",`Theme: ${THEME_LBL[m]}. Tap to change.`);b.title=`Theme: ${THEME_LBL[m]}`;const l=b.querySelector("span");if(l)l.textContent=THEME_LBL[m]}
-  const bg=getComputedStyle(r).getPropertyValue("--bg").trim();document.querySelectorAll('meta[name="theme-color"]').forEach(mt=>mt.setAttribute("content","#000000"));
+  const bg=getComputedStyle(r).getPropertyValue("--bg").trim();const mb=getComputedStyle(r).getPropertyValue("--m-bg").trim()||"#000000";document.querySelectorAll('meta[name="theme-color"]').forEach(mt=>mt.setAttribute("content",mb));
   return was!==r.getAttribute("data-theme")}
 function setTheme(m){try{localStorage.setItem("ap-theme",m)}catch(_){}applyTheme();render();toast(m==="auto"?"Auto: dark after sunset":m==="dark"?"Night mode on":"Day mode on")}
 function cycleTheme(){const m=themeMode();setTheme(THEMES[(THEMES.indexOf(m)+1)%3])}
@@ -6198,7 +6198,7 @@ html[data-ap-tab="today"] .hcount small,html[data-ap-tab="today"] .hcount span{c
 /* under the scene: three numbers, today's events, quick add — nothing else */
 html[data-ap-tab="today"] .mv,html[data-ap-tab="today"] #banner{margin:20px 0 0!important}
 html[data-ap-tab="today"] .mv{order:9}
-#hcap,#today .shead,#briefBox,#todayBox{display:none!important}
+#hcap,#today .shead,#briefBox{display:none!important}
 #figs{margin-top:28px!important}
 .figbar{background:var(--m-card)!important;border:1px solid var(--m-hair)!important;border-radius:var(--m-r)!important;box-shadow:var(--m-shadow)!important}
 .figbar .mbars{display:none!important}
@@ -6268,6 +6268,46 @@ section[aria-labelledby="cTitle"] .rowlbl:first-of-type{display:none!important}
 .empty::before{background:var(--m-card2)!important;border:0!important;box-shadow:none!important}
 
 @media (prefers-reduced-motion:reduce){.enter{animation:none!important}}
+
+/* ================= native feel (Nov 6) ================= */
+/* status bar strip matches the app in day and night */
+html::before{content:"";position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--m-bg);z-index:60;pointer-events:none}
+html,body{overscroll-behavior:none}
+button,a,.tile,.card,.ev,.rc,.fig,.tabbar,.topnav,.sc-card,.drow,.dbig,.chip,.sc-chip,label{-webkit-tap-highlight-color:transparent!important;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text}
+@media (max-width:640px){input,textarea,select{font-size:16px!important}}
+
+/* tabs slide in from the side you swiped */
+html[data-dir="next"] .enter{animation:mInR .38s var(--m-out) both!important}
+html[data-dir="prev"] .enter{animation:mInL .38s var(--m-out) both!important}
+@keyframes mInR{from{opacity:0;transform:translateX(42px)}to{opacity:1;transform:none}}
+@keyframes mInL{from{opacity:0;transform:translateX(-42px)}to{opacity:1;transform:none}}
+main.page.ap-drag{transition:none}
+main.page.ap-back{transition:transform .3s var(--m-out),opacity .3s}
+
+/* pull to refresh */
+.ap-ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + var(--hdr,56px) + 6px);z-index:29;width:38px;height:38px;margin-left:-19px;border-radius:50%;
+  background:var(--m-card);border:1px solid var(--m-hair);box-shadow:0 6px 20px rgba(0,0,0,.18);display:grid;place-items:center;opacity:0;transform:translateY(-50px) scale(.6);pointer-events:none}
+.ap-ptr i{width:18px;height:18px;border-radius:50%;border:2px solid var(--m-hair);border-top-color:var(--m-ink)}
+.ap-ptr.spin i{animation:apSpin .7s linear infinite}
+@keyframes apSpin{to{transform:rotate(360deg)}}
+.ap-ptr.back{transition:transform .35s var(--m-out),opacity .25s}
+
+/* event sheet: grab bar so it reads as draggable */
+.sheet .sh-top{touch-action:none;cursor:grab;position:relative}
+.sheet .sh-top::before{content:"";position:absolute;left:50%;top:6px;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:var(--m-hair)}
+
+/* Today: a real list of today's events instead of the repeated picture */
+#reel{display:none!important}
+#today:not(.off){display:flex!important;flex-direction:column}
+#todayBox{display:block!important;order:-1;margin-bottom:16px}
+#todayBox>.card:not(:first-child){display:none!important}
+#todayBox>.card:first-child{padding:20px 22px!important}
+#todayBox>.card:first-child>h3{font:700 22px/1.1 var(--ag-font)!important;letter-spacing:-.02em;color:var(--m-ink)!important;margin:0 0 12px!important}
+.intro .leave{display:inline-flex!important;align-items:center;gap:8px;margin:0 0 16px!important;padding:7px 14px!important;border-radius:999px!important;
+  background:rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.22)!important;color:#fff!important;font:600 14px/1.2 var(--ag-font)!important;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.intro .leave.now{background:#ff453a!important;border-color:#ff453a!important}
+@media (prefers-reduced-motion:reduce){html[data-dir] .enter{animation:none!important}.ap-ptr.spin i{animation-duration:2s}}
 </style>
 <script id="arvin-min-js">
 (function(){
@@ -6276,7 +6316,7 @@ section[aria-labelledby="cTitle"] .rowlbl:first-of-type{display:none!important}
   /* "Courses and work." is only courses now */
   /* sign-in prompts go under the scene, not on top of it */
   var figs=document.getElementById("figs"),bn=document.getElementById("banner"),mv=document.querySelector("main.page>.mv");
-  if(figs){if(mv)figs.after(mv);if(bn)figs.after(bn)}
+  var tdy=document.getElementById("today");if(tdy){if(mv)tdy.after(mv);if(bn)tdy.after(bn)}
   if(bn)bn.setAttribute("data-tab","today");if(mv)mv.setAttribute("data-tab","today");
   var c=document.getElementById("cTitle");if(c)c.textContent="Courses.";
   /* count-up numbers and scroll reveals are off: show final values straight away */
@@ -6286,8 +6326,74 @@ section[aria-labelledby="cTitle"] .rowlbl:first-of-type{display:none!important}
   setTimeout(nudge,60);setTimeout(nudge,600);
   document.querySelectorAll("#tabbar button,.topnav button[data-t]").forEach(function(b){b.addEventListener("click",function(){setTimeout(nudge,40)})});
 })();
+
+/* ================= native feel (Nov 6) ================= */
+(function(){
+  var root=document.documentElement,main=document.querySelector("main.page");
+  var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var ORDER=["today","week","school","exams","tutor","todo"];
+  function cur(){return root.dataset.apTab||"today"}
+  function sheetOpen(){return document.getElementById("sheet").classList.contains("on")||document.body.classList.contains("inroom")||!!document.querySelector(".sc-sheet.on")}
+  /* status bar / Safari colour follows the theme */
+  function tint(){var b=getComputedStyle(root).getPropertyValue("--m-bg").trim();if(b)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.setAttribute("content",b)})}
+  tint();new MutationObserver(tint).observe(root,{attributes:true,attributeFilter:["data-theme"]});
+
+  /* go to a tab, remembering which way we moved */
+  function go(t,dir){root.dataset.dir=dir||"";window.goTab(t);setTimeout(function(){root.dataset.dir=""},450);if(t==="week")toNow()}
+  document.querySelectorAll("#tabbar button,.topnav button[data-t]").forEach(function(b){b.addEventListener("click",function(){var a=ORDER.indexOf(cur()),z=ORDER.indexOf(b.dataset.t);root.dataset.dir=z>a?"next":z<a?"prev":"";if(b.dataset.t==="week")toNow();setTimeout(function(){root.dataset.dir=""},450)},true)});
+
+  /* Schedule opens at the current time */
+  function toNow(){setTimeout(function(){var c=document.getElementById("cal");if(!c)return;var n=c.querySelector(".nowline")||c.querySelector(".ev:not(.allday)");if(!n)return;
+    var y=n.getBoundingClientRect().top+scrollY-innerHeight*.35;scrollTo({top:Math.max(0,y),behavior:"auto"})},140)}
+  if(cur()==="week")setTimeout(toNow,900);
+
+  /* touch: swipe between tabs, pull down to refresh */
+  var ptr=document.createElement("div");ptr.className="ap-ptr";ptr.innerHTML="<i></i>";document.body.appendChild(ptr);
+  var sx=0,sy=0,mode=null,dx=0,dy=0,busy=false,active=false;
+  function scrollsX(el){for(;el&&el!==main&&el!==document.body;el=el.parentElement){if(el.matches&&el.matches("input,textarea,select,#cal,.rail,.rr,.tl30,.sc-rad,.ap-noswipe"))return true;var cs=getComputedStyle(el);if((cs.overflowX==="auto"||cs.overflowX==="scroll")&&el.scrollWidth>el.clientWidth+4)return true}return false}
+  document.addEventListener("touchstart",function(e){active=false;if(e.touches.length!==1||sheetOpen()||!main.contains(e.target))return;
+    var t=e.touches[0];sx=t.clientX;sy=t.clientY;dx=dy=0;mode=null;active=true;
+    active=active&&!(scrollsX(e.target)&&scrollY>0);this._x=scrollsX(e.target)},{passive:true});
+  document.addEventListener("touchmove",function(e){if(!active)return;var t=e.touches[0];dx=t.clientX-sx;dy=t.clientY-sy;
+    if(!mode){if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)*1.4&&!this._x)mode="x";else if(dy>10&&Math.abs(dy)>Math.abs(dx)*1.3&&scrollY<=0&&!busy&&(cur()==="today"||cur()==="week"))mode="y";else if(Math.abs(dy)>10)active=false;}
+    if(mode==="x"&&!reduce){var i=ORDER.indexOf(cur()),edge=(dx>0&&i===0)||(dx<0&&i===ORDER.length-1);main.classList.add("ap-drag");main.style.transform="translateX("+(dx*(edge?.12:.35))+"px)";main.style.opacity=String(1-Math.min(.35,Math.abs(dx)/900))}
+    if(mode==="y"){if(e.cancelable)e.preventDefault();var p=Math.min(110,dy*.55);ptr.classList.remove("back");ptr.style.opacity=String(Math.min(1,p/50));ptr.style.transform="translateY("+(p-50)+"px) rotate("+(p*4)+"deg) scale("+(.6+Math.min(.4,p/120))+")"}
+  },{passive:false});
+  document.addEventListener("touchend",function(){if(!active){return}active=false;
+    if(mode==="x"){main.classList.remove("ap-drag");main.style.transform="";main.style.opacity="";var i=ORDER.indexOf(cur());
+      if(Math.abs(dx)>70){var j=dx<0?i+1:i-1;if(j>=0&&j<ORDER.length){go(ORDER[j],dx<0?"next":"prev");return}}
+      if(!reduce){main.classList.add("ap-back");setTimeout(function(){main.classList.remove("ap-back")},320)}}
+    if(mode==="y"){var p=Math.min(110,dy*.55);ptr.classList.add("back");
+      if(p>=58){busy=true;ptr.style.transform="translateY(8px) scale(1)";ptr.style.opacity="1";ptr.classList.add("spin");var t0=Date.now();
+        Promise.resolve(window.apSync?window.apSync():null).catch(function(){}).then(function(){setTimeout(function(){ptr.classList.remove("spin");ptr.style.opacity="0";ptr.style.transform="translateY(-50px) scale(.6)";busy=false},Math.max(0,700-(Date.now()-t0)))})}
+      else{ptr.style.opacity="0";ptr.style.transform="translateY(-50px) scale(.6)"}}
+    mode=null},{passive:true});
+
+  /* sheets grow out of the card you tapped */
+  var tap={x:innerWidth/2,y:innerHeight*.7};
+  document.addEventListener("pointerdown",function(e){tap={x:e.clientX,y:e.clientY}},true);
+  function grow(el){if(reduce||!el||!el.animate)return;var r=el.getBoundingClientRect();if(!r.width)return;
+    var ox=Math.max(0,Math.min(r.width,tap.x-r.left)),oy=Math.max(0,Math.min(r.height,tap.y-r.top));
+    el.animate([{transformOrigin:ox+"px "+oy+"px",transform:"scale(.86)",opacity:.4,borderRadius:"28px"},{transformOrigin:ox+"px "+oy+"px",transform:"none",opacity:1}],{duration:420,easing:"cubic-bezier(.22,1,.36,1)"})}
+  var sh=document.getElementById("sheet");
+  if(sh)new MutationObserver(function(){if(sh.classList.contains("on")&&!sh._on){sh._on=true;setTimeout(function(){grow(sh)},16)}else if(!sh.classList.contains("on"))sh._on=false}).observe(sh,{attributes:true,attributeFilter:["class"]});
+  var rm=document.getElementById("room");
+  if(rm)new MutationObserver(function(){if(!rm.hidden&&!rm._on){rm._on=true;grow(rm)}else if(rm.hidden)rm._on=false}).observe(rm,{attributes:true,attributeFilter:["hidden"]});
+  new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.classList&&n.classList.contains("sc-sheet"))setTimeout(function(){grow(n)},30)})})}).observe(document.body,{childList:true});
+
+  /* drag the event sheet down to close it */
+  if(sh){var top=sh.querySelector(".sh-top"),y0=null,d=0;
+    if(top){top.addEventListener("pointerdown",function(e){if(e.target.closest("button"))return;y0=e.clientY;d=0;sh.style.transition="none";top.setPointerCapture(e.pointerId)});
+      top.addEventListener("pointermove",function(e){if(y0==null)return;d=Math.max(0,e.clientY-y0);sh.style.transform="translateY("+d+"px)"});
+      function up(){if(y0==null)return;y0=null;sh.style.transition="";sh.style.transform="";if(d>100){var c=document.getElementById("shClose");if(c)c.click()}}
+      top.addEventListener("pointerup",up);top.addEventListener("pointercancel",up)}}
+})();
 </script>
 <!--/MIN-->
+
+
+
+
 
 
 
