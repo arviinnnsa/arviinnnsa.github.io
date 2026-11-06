@@ -6,7 +6,7 @@
    - Inter font: saved on the device so the app looks the same offline.
    - Google Calendar, sign-in and weather requests are never cached here
      (the app keeps its own saved copy of your events). */
-const VERSION = "ap-v14";
+const VERSION = "ap-v15";
 const SHELL = VERSION + "-shell";
 const FONTS = "ap-fonts-v2";
 const FONT_CSS = "https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap";

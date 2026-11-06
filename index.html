@@ -316,25 +316,29 @@ ul.fml li{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.82em;bac
 </script>
 
 </head><body>
-<div id="launch" aria-hidden="true"><div class="ag-l-glow"></div><div class="ag-l-stage"><div class="ag-l-name"><span>A</span><span>R</span><span>V</span><span>I</span><span>N</span><i class="ag-l-caret"></i><b class="ag-l-sheen" aria-hidden="true">ARVIN</b></div></div></div>
-<script>(function(){var L=document.getElementById("launch"),sa=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches),seen=null;try{seen=sessionStorage.getItem("ap-launch")}catch(e){}
-if(!sa||seen){L.remove();return}try{sessionStorage.setItem("ap-launch","1")}catch(e){}
-var off=Math.max(0,(screen.height-innerHeight)/2);if(navigator.standalone===true&&off>0&&off<60)L.style.setProperty("--lt","calc(50% - "+off+"px)");
-var rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,loaded=false,seq=false,done=false;
-function go(){if(done||!loaded||!seq)return;done=true;L.classList.add("out");setTimeout(function(){L.remove()},900)}
-addEventListener("load",function(){loaded=true;go()});setTimeout(function(){loaded=seq=true;go()},6000);
-var cr=L.querySelector(".ag-l-caret"),sp=L.querySelectorAll(".ag-l-name span");
-function at(ms,fn){setTimeout(fn,ms)}
-function caret(i){if(!cr||!sp[0])return;cr.style.left=(i<0?sp[0].offsetLeft-4:sp[i].offsetLeft+sp[i].offsetWidth*.6)+"px"}
-requestAnimationFrame(function(){requestAnimationFrame(function(){
-  if(rm){for(var k=0;k<sp.length;k++)sp[k].classList.add("on");at(500,function(){seq=true;go()});return}
-  L.classList.add("ag-play");caret(-1);
-  at(250,function(){cr&&cr.classList.add("on")});
-  for(var q=0;q<sp.length;q++)(function(i){at(520+150*i,function(){sp[i].classList.add("on");caret(i)})})(q);
-  var end=520+150*sp.length;
-  at(end+350,function(){cr&&cr.classList.remove("on");L.classList.add("ag-sheen")});
-  at(end+1700,function(){seq=true;go()});
-})});
+<style id="arvin-launch-css">
+/* start-up screen, inspired by the iPhone boot screen */
+#launch{position:fixed!important;inset:0!important;z-index:9999!important;background:#000!important;overflow:hidden;opacity:1;transition:opacity .6s ease!important;display:block!important}
+#launch .ar-boot{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center}
+#launch .ar-logo{font:600 30px/1 Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;letter-spacing:.42em;padding-left:.42em;color:#f5f5f7;
+  opacity:0;transform:scale(.94);filter:blur(6px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform 1.1s cubic-bezier(.22,1,.36,1),filter .9s}
+#launch .ar-bar{position:relative;width:150px;height:4px;margin-top:64px;border-radius:2px;background:rgba(255,255,255,.22);overflow:hidden;opacity:0;transition:opacity .6s .35s}
+#launch .ar-bar i{position:absolute;inset:0;background:#f5f5f7;border-radius:2px;transform:scaleX(0);transform-origin:left center}
+#launch.on .ar-logo{opacity:1;transform:none;filter:none}
+#launch.on .ar-bar{opacity:1}
+#launch.out{opacity:0!important;pointer-events:none}
+#launch.out .ar-logo{transform:scale(1.04);transition:transform .6s ease}
+@media (prefers-reduced-motion:reduce){#launch .ar-logo,#launch .ar-bar{transition:opacity .2s!important;transform:none!important;filter:none!important}}
+</style>
+<div id="launch" aria-hidden="true"><div class="ar-boot"><div class="ar-logo">ARVIN</div><div class="ar-bar"><i></i></div></div></div>
+<script>(function(){var L=document.getElementById("launch"),sa=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches),seen=null,force=/[?&]launch=1/.test(location.search);try{seen=sessionStorage.getItem("ap-launch")}catch(e){}
+if(!force&&(!sa||seen)){L.remove();return}try{sessionStorage.setItem("ap-launch","1")}catch(e){}
+/* iPhone-style start-up: black, ARVIN wordmark, thin progress bar that fills as the app loads */
+var bar=L.querySelector(".ar-bar i"),rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,t0=Date.now(),loaded=false,done=false,p=0;
+function set(v,ms){p=v;bar.style.transition="transform "+(ms||600)+"ms cubic-bezier(.22,1,.36,1)";bar.style.transform="scaleX("+v+")"}
+function finish(){if(done)return;done=true;var wait=Math.max(0,1500-(Date.now()-t0));setTimeout(function(){set(1,380);setTimeout(function(){L.classList.add("out");setTimeout(function(){L.remove()},650)},rm?100:520)},wait)}
+requestAnimationFrame(function(){requestAnimationFrame(function(){L.classList.add("on");set(.18,700);setTimeout(function(){if(!done)set(.46,1100)},700);setTimeout(function(){if(!done)set(.72,1600)},1800)})});
+addEventListener("load",function(){loaded=true;finish()});setTimeout(finish,6000);
 })();</script>
 <title>Arvin's Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5814,29 +5818,7 @@ svg[viewBox="0 0 24 24"]{stroke-width:1.7}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap">
-<style id="arvin-launch-css">
-#launch{background:#000!important;overflow:hidden}
-#launch .lw{display:none}
-.ag-l-glow{position:absolute;left:50%;top:var(--lt,50%);width:120vmax;height:120vmax;transform:translate(-50%,-50%) scale(.85);pointer-events:none;opacity:0;transition:opacity 1.8s ease,transform 2.6s cubic-bezier(.22,1,.36,1);
-  background:radial-gradient(22vmax 9vmax at 46% 50%,rgba(74,123,255,.20),transparent 70%),radial-gradient(18vmax 8vmax at 56% 52%,rgba(255,122,82,.12),transparent 70%)}
-#launch.ag-play .ag-l-glow{opacity:1;transform:translate(-50%,-50%) scale(1)}
-.ag-l-stage{position:absolute;left:0;right:0;top:var(--lt,50%);height:0;transition:transform .8s cubic-bezier(.22,1,.36,1),filter .8s}
-.ag-l-name{position:absolute;left:0;right:0;top:-14px;height:28px;display:flex;justify-content:center;align-items:center;overflow:visible;
-  font:400 26px/1 Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;letter-spacing:.62em;padding-left:.62em;font-feature-settings:"ss01","cv11"}
-.ag-l-name span{display:inline-block;opacity:0;transform:translateY(10px);filter:blur(8px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.34,1.4,.64,1),filter .5s;
-  background:linear-gradient(180deg,#ffffff 15%,#c9cad0 60%,#8e8f96);-webkit-background-clip:text;background-clip:text;color:transparent}
-.ag-l-name span.on{opacity:1;transform:none;filter:none}
-.ag-l-caret{position:absolute;left:0;top:0;width:1.5px;height:28px;background:#f5f5f7;opacity:0;border-radius:1px;transition:left .14s cubic-bezier(.22,1,.36,1),opacity .25s}
-.ag-l-caret.on{opacity:1;animation:agLBlink .9s steps(1) infinite}
-@keyframes agLBlink{50%{opacity:0}}
-.ag-l-sheen{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;padding-left:.62em;font:inherit;letter-spacing:inherit;pointer-events:none;
-  color:transparent;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.95) 50%,transparent 58%) no-repeat;background-size:300% 100%;background-position:120% 0;-webkit-background-clip:text;background-clip:text;opacity:0}
-#launch.ag-sheen .ag-l-sheen{animation:agLSheen 1.1s cubic-bezier(.45,0,.2,1) both}
-@keyframes agLSheen{0%{opacity:1;background-position:120% 0}100%{opacity:1;background-position:-20% 0}}
-#launch.out{opacity:0!important;transition:opacity .6s ease!important}
-#launch.out .ag-l-stage{transform:scale(1.04);filter:blur(2px)}
-@media (prefers-reduced-motion:reduce){#launch *{transition:none!important;animation:none!important}}
-</style>
+
 
 
 <style id="arvin-glass-css">
