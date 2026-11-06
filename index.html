@@ -330,13 +330,13 @@ ul.fml li{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.82em;bac
 #launch.out .ar-logo{transform:scale(1.04);transition:transform .6s ease}
 @media (prefers-reduced-motion:reduce){#launch .ar-logo,#launch .ar-bar{transition:opacity .2s!important;transform:none!important;filter:none!important}}
 </style>
-<div id="launch" aria-hidden="true"><div class="ar-boot"><div class="ar-logo">ARVIN</div><div class="ar-bar"><i></i></div></div></div>
+<div id="launch" aria-hidden="true"><div class="ar-boot"><div class="ar-logo">ARVIN</div></div></div>
 <script>(function(){var L=document.getElementById("launch"),sa=navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches),seen=null,force=/[?&]launch=1/.test(location.search);try{seen=sessionStorage.getItem("ap-launch")}catch(e){}
 if(!force&&(!sa||seen)){L.remove();return}try{sessionStorage.setItem("ap-launch","1")}catch(e){}
-/* iPhone-style start-up: black, ARVIN wordmark, thin progress bar that fills as the app loads */
+/* start-up: black screen with just the ARVIN wordmark */
 var bar=L.querySelector(".ar-bar i"),rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,t0=Date.now(),loaded=false,done=false,p=0;
-function set(v,ms){p=v;bar.style.transition="transform "+(ms||600)+"ms cubic-bezier(.22,1,.36,1)";bar.style.transform="scaleX("+v+")"}
-function finish(){if(done)return;done=true;var wait=Math.max(0,1500-(Date.now()-t0));setTimeout(function(){set(1,380);setTimeout(function(){L.classList.add("out");setTimeout(function(){L.remove()},650)},rm?100:520)},wait)}
+function set(v,ms){p=v;if(!bar)return;bar.style.transition="transform "+(ms||600)+"ms cubic-bezier(.22,1,.36,1)";bar.style.transform="scaleX("+v+")"}
+function finish(){if(done)return;done=true;var wait=Math.max(0,1500-(Date.now()-t0));setTimeout(function(){set(1,380);setTimeout(function(){L.classList.add("out");setTimeout(function(){L.remove()},650)},rm?100:250)},wait)}
 requestAnimationFrame(function(){requestAnimationFrame(function(){L.classList.add("on");set(.18,700);setTimeout(function(){if(!done)set(.46,1100)},700);setTimeout(function(){if(!done)set(.72,1600)},1800)})});
 addEventListener("load",function(){loaded=true;finish()});setTimeout(finish,6000);
 })();</script>
