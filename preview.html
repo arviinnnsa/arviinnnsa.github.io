@@ -6390,6 +6390,99 @@ main.page.ap-back{transition:transform .3s var(--m-out),opacity .3s}
 })();
 </script>
 <!--/MIN-->
+<!--T2-->
+<style id="arvin-today2-css">
+/* ===== Today v2 — Apple iOS-page style: centred black hero, framed scene with a lock-screen clock, quiet list ===== */
+html[data-ap-tab="today"] main.page{padding-top:0!important}
+html[data-ap-tab="today"] .bar{background:rgba(0,0,0,.9)!important;border-bottom-color:rgba(255,255,255,.08)!important}
+html[data-ap-tab="today"] .bar .icon,html[data-ap-tab="today"] .kn-wm b{color:#f5f5f7!important}
+html[data-ap-tab="today"] .topnav button{color:rgba(255,255,255,.62)!important}
+html[data-ap-tab="today"] .topnav button[aria-current="true"]{background:#f5f5f7!important;color:#000!important}
+html[data-ap-tab="today"]::before{background:#000!important}
+
+/* hero: always black, centred, lots of air */
+html[data-ap-tab="today"] .tdtop{height:auto!important;min-height:0!important;overflow:visible!important;background:#000!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;padding:clamp(40px,7vh,88px) 0 clamp(40px,6vh,72px)!important}
+html[data-ap-tab="today"] .td-l{position:static!important;padding:0 24px!important;text-align:center!important;width:100%!important;max-width:880px;margin:0 auto!important}
+html[data-ap-tab="today"] .intro,html[data-ap-tab="today"] .intro>div{text-align:center!important;align-items:center!important;margin:0 auto!important;max-width:none!important}
+html[data-ap-tab="today"] .intro .greet{font:600 clamp(17px,1.6vw,21px)/1.2 var(--ag-font)!important;color:#f5f5f7!important;margin:0 0 10px!important;letter-spacing:-.01em}
+html[data-ap-tab="today"] .intro h1{font:700 clamp(44px,7.4vw,88px)/1.04 var(--ag-font)!important;letter-spacing:-.04em!important;color:#f5f5f7!important;margin:0!important;text-shadow:none!important}
+.t2-sub{font:400 clamp(17px,1.7vw,21px)/1.4 var(--ag-font);color:#86868b;margin:14px 0 0;letter-spacing:-.005em}
+.t2-sub b{color:#f5f5f7;font-weight:600}
+html[data-ap-tab="today"] .intro .cta{justify-content:center!important;margin:26px 0 0!important;gap:12px!important}
+html[data-ap-tab="today"] .intro .bt{border-radius:999px!important;padding:12px 22px!important;font:500 16px/1 var(--ag-font)!important}
+html[data-ap-tab="today"] .intro .bt.primary{background:#0071e3!important;border-color:#0071e3!important}
+html[data-ap-tab="today"] .intro .bt.secondary{background:transparent!important;border:1px solid rgba(255,255,255,.35)!important;color:#f5f5f7!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-ap-tab="today"] .intro .leave{margin:16px 0 0!important;background:rgba(255,255,255,.1)!important;border-color:transparent!important}
+
+/* the scene, framed like a device shot, with a giant thin clock */
+html[data-ap-tab="today"] .td-r{position:relative!important;inset:auto!important;width:min(calc(100% - 32px),1080px)!important;aspect-ratio:16/9;height:auto!important;
+  margin:clamp(36px,6vh,64px) auto 0!important;border-radius:clamp(28px,3vw,40px)!important;overflow:hidden!important;background:#111!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 40px 120px rgba(0,0,0,.6)}
+@media (max-width:640px){html[data-ap-tab="today"] .td-r{aspect-ratio:4/5;width:calc(100% - 24px)!important}}
+html[data-ap-tab="today"] .td-r .hero::after{background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,transparent 35%,transparent 55%,rgba(0,0,0,.55) 100%)!important}
+html[data-ap-tab="today"] .hero canvas{right:auto!important;left:50%!important;top:0!important;bottom:auto!important;height:100%!important;width:auto!important;aspect-ratio:16/10.5;min-width:100%;transform:translateX(-50%)!important}
+html[data-ap-tab="today"] .hcount{left:0!important;right:0!important;bottom:clamp(22px,4vw,48px)!important;background:none!important;border:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  display:flex!important;justify-content:center!important;padding:0!important}
+html[data-ap-tab="today"] .hcount .hc-d,html[data-ap-tab="today"] .hcount .hc-n{display:none!important}
+html[data-ap-tab="today"] .hcount .hc-t{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center}
+html[data-ap-tab="today"] .hcount .hc-t b{font:200 clamp(64px,13vw,150px)/.95 var(--ag-font)!important;letter-spacing:-.045em!important;font-variant-numeric:tabular-nums;text-shadow:0 4px 40px rgba(0,0,0,.35)}
+html[data-ap-tab="today"] .hcount .hc-t span{font:500 clamp(14px,1.4vw,17px)/1.2 var(--ag-font)!important;margin-top:8px}
+html[data-ap-tab="today"] .hcount .hc-w{position:fixed;display:none!important}
+.t2-wx{position:absolute;z-index:6;top:16px;right:16px;padding:7px 12px;border-radius:999px;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.14);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:#fff;font:600 13px/1 var(--ag-font)}
+.t2-wx:empty{display:none}
+
+/* below the hero: same colour as the rest of the app (light in day, black at night) */
+html[data-ap-tab="today"] main.page>#figs,html[data-ap-tab="today"] #today{max-width:880px;margin-left:auto!important;margin-right:auto!important;width:100%}
+html[data-ap-tab="today"] #today{padding-top:clamp(44px,7vh,80px)!important}
+#todayBox>.card:first-child{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
+#todayBox>.card:first-child>h3{display:flex!important;align-items:baseline;justify-content:space-between;font:700 clamp(28px,3.4vw,40px)/1.05 var(--ag-font)!important;letter-spacing:-.03em!important;margin:0 0 18px!important}
+#todayBox>.card:first-child>h3 em{font:400 15px/1 var(--ag-font)!important;color:var(--m-mute)!important;font-style:normal}
+#todayBox .tline{display:block!important;border-top:1px solid var(--m-hair)}
+#todayBox .trow{display:grid!important;grid-template-columns:84px 1fr!important;align-items:center;gap:12px;width:100%;padding:18px 0!important;background:none!important;border:0!important;border-bottom:1px solid var(--m-hair)!important;border-radius:0!important;text-align:left}
+#todayBox .trow .tm{font:300 22px/1 var(--ag-font)!important;color:var(--m-ink)!important;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+#todayBox .trow .tt{font:600 18px/1.25 var(--ag-font)!important;color:var(--m-ink)!important;border:0!important;padding:0!important;display:flex;align-items:center;gap:10px}
+#todayBox .trow .tt::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--kc,var(--m-accent));flex:none}
+#todayBox .trow .tt{border-left:0!important}
+/* stats: three big thin numbers, no box */
+html[data-ap-tab="today"] #figs{order:2;margin-top:clamp(40px,6vh,64px)!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;
+  display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:0!important}
+html[data-ap-tab="today"] #figs .fig{background:none!important;border:0!important;box-shadow:none!important;padding:0 8px!important;text-align:left;border-left:1px solid var(--m-hair)!important;padding-left:clamp(12px,2vw,24px)!important}
+html[data-ap-tab="today"] #figs .fig:first-child{border-left:0!important;padding-left:0!important}
+html[data-ap-tab="today"] #figs .fig b{font-size:clamp(40px,6vw,64px)!important}
+html[data-ap-tab="today"] #figs .fl{font:400 13px/1.35 var(--ag-font)!important;margin-top:6px}
+/* order: hero → day list → numbers → rest */
+html[data-ap-tab="today"] main.page{display:flex!important;flex-direction:column!important}
+html[data-ap-tab="today"] main.page>.tdtop{order:0}
+html[data-ap-tab="today"] main.page>#today{order:1}
+html[data-ap-tab="today"] main.page>#figs{order:2}
+html[data-ap-tab="today"] main.page>#banner,html[data-ap-tab="today"] main.page>.mv{order:3;max-width:880px;width:100%;margin:40px auto 0!important}
+#qaddWrap{display:none!important}
+@media (max-width:640px){
+  html[data-ap-tab="today"] main.page>#figs,html[data-ap-tab="today"] #today{padding-left:4px;padding-right:4px}
+  #todayBox .trow{grid-template-columns:68px 1fr!important}
+}
+</style>
+<script id="arvin-today2-js">
+(function(){
+  var tdl=document.querySelector(".td-l"),stage=document.querySelector(".td-r");if(!tdl||!stage)return;
+  var sub=document.createElement("p");sub.className="t2-sub";
+  
+  var wx=document.createElement("span");wx.className="t2-wx";stage.appendChild(wx);
+  function fill(){
+    var n=document.querySelector(".hcount .hc-n strong"),w=document.querySelector(".hcount .hc-w");
+    sub.innerHTML=n&&n.textContent.trim()?"Next up · <b>"+n.textContent.trim().replace(/</g,"&lt;")+"</b>":"Nothing else on today.";
+    if(w){var s=w.querySelector("small"),t=w.querySelector("strong");wx.textContent=(s?s.textContent:"")+(t?" "+t.textContent:"")}
+    /* keep the sub line right under the headline even after the intro re-renders */
+    var h1=document.querySelector("#hero h1");if(h1&&h1.nextSibling!==sub)h1.after(sub)
+  }
+  fill();setInterval(fill,15000);
+  var hr=document.getElementById("hero");if(hr)new MutationObserver(function(){var h1=hr.querySelector("h1");if(h1&&h1.nextSibling!==sub)h1.after(sub)}).observe(hr,{childList:true,subtree:true});
+  new MutationObserver(function(){clearTimeout(fill.t);fill.t=setTimeout(fill,60)}).observe(document.querySelector(".hcount")||document.body,{childList:true,subtree:true,characterData:true});
+})();
+</script>
+<!--/T2-->
 
 
 
