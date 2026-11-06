@@ -2805,6 +2805,7 @@ DEEP.p8 = {
 (()=>{
 "use strict";
 const TZ="America/Vancouver",CLOCK="Etc/GMT+7",SNAP_DATE="Oct 26";/* BC stays on UTC-7 year-round since Nov 1 2026; CLOCK keeps the planner right even if a device still has the old fall-back rule */
+const OFF="-07:00",wallMs=s=>Date.parse((s.length>10?s.slice(0,16):s.slice(0,10)+"T00:00")+":00"+OFF);/* event wall time -> real moment, never via the device time zone */
 const $=s=>document.querySelector(s);
 const h=(tag,attrs={},...kids)=>{const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs)){if(v==null||v===false)continue;if(k==="class")e.className=v;else if(k==="style")e.style.cssText=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else e.setAttribute(k,v===true?"":v)}for(const c of kids.flat()){if(c==null||c===false)continue;e.append(c.nodeType?c:document.createTextNode(String(c)))}return e};
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -2898,8 +2899,10 @@ function wxText(cd){if(!cd.live)return"";const d=cd.ph==="day"||cd.ph==="golden"
 async function loadWX(force){if(!force&&WX&&Date.now()-WX.at<45*60e3)return;try{
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${WXLL.lat}&longitude=${WXLL.lon}&hourly=weather_code,temperature_2m,cloud_cover&daily=sunrise,sunset&timezone=America%2FVancouver&forecast_days=8&past_days=1`;
   const r=await fetch(u);if(!r.ok)return;const j=await r.json(),hours={},days={};
-  j.hourly.time.forEach((t,i)=>hours[t.slice(0,13)]={c:j.hourly.weather_code[i],t:Math.round(j.hourly.temperature_2m[i]),cc:j.hourly.cloud_cover[i]});
-  j.daily.time.forEach((d,i)=>days[d]={rise:minOf(j.daily.sunrise[i]),set:minOf(j.daily.sunset[i])});
+  const fix=(j.utc_offset_seconds!=null?-25200-j.utc_offset_seconds:0)/60;/* if the weather server still uses the old UTC-8 winter rule, move it to UTC-7 */
+  const sh=t=>{if(!fix)return t;const d=new Date(Date.parse(t+":00Z")+fix*60e3);return d.toISOString().slice(0,16)};
+  j.hourly.time.forEach((t,i)=>hours[sh(t).slice(0,13)]={c:j.hourly.weather_code[i],t:Math.round(j.hourly.temperature_2m[i]),cc:j.hourly.cloud_cover[i]});
+  j.daily.time.forEach((d,i)=>days[d]={rise:minOf(sh(j.daily.sunrise[i])),set:minOf(sh(j.daily.sunset[i]))});
   WX={hours,days,at:Date.now()};try{localStorage.setItem("ap-wx",JSON.stringify(WX))}catch(e){}
   heroCache.key=null;for(const st of railLives.values())st.cache={};for(const st of lives)st.cache={};renderHero();
 }catch(e){}}
@@ -3437,7 +3440,7 @@ function heroExtras(e,cur,n){
     if(li&&!cur&&lt<=18*60)bits.push(lt<=0?"Leave now":`Leave by ${t12(li.leave)}`,`${li.drive} min drive`);if(ea)bits.push(`Earn ${money(ea)}`);
     cap.append(h("span",{class:"hck",style:`--kc:${c.c}`},h("i",{}),/tutor/i.test(e.title||"")?"Tutoring":c.label),...bits.map(b=>h("span",{},b)),
       h("button",{class:"lnk cgo",onclick:()=>openEvent(e)},"Details ›"));
-    HC={start:new Date(e.start).getTime(),end:new Date(e.end&&e.end.length>10?e.end:k+"T23:59").getTime(),name:friendly(e)};
+    HC={start:wallMs(e.start),end:wallMs(e.end&&e.end.length>10?e.end:k+"T23:59"),name:friendly(e)};
     {const wt=wxText(condAt()),[wc,wtp]=wt?wt.split(" · "):[];
     cnt.append(h("div",{class:"hc-t"},h("b",{class:"tab"}),h("span",{})),h("i",{class:"hc-d"}),h("div",{class:"hc-n"},h("small",{},cur?"Now":"Up next"),h("strong",{},`${friendly(e)} · ${t12(s0)}`)),
       ...(wt?[h("i",{class:"hc-d"}),h("div",{class:"hc-w"},h("small",{},wc),h("strong",{},wtp||""))]:[]));
@@ -4096,7 +4099,7 @@ async function gapi(path,opts={}){
   return r.status===204?null:r.json();
 }
 async function listAll(calId,w){const items=[];let tok="";
-  for(let i=0;i<8;i++){const q=new URLSearchParams({timeMin:new Date(w.from+"T00:00:00").toISOString(),timeMax:new Date(w.to+"T00:00:00").toISOString(),singleEvents:"true",orderBy:"startTime",maxResults:"2500",timeZone:TZ});
+  for(let i=0;i<8;i++){const q=new URLSearchParams({timeMin:w.from+"T00:00:00"+OFF,timeMax:w.to+"T00:00:00"+OFF,singleEvents:"true",orderBy:"startTime",maxResults:"2500",timeZone:TZ});
     if(tok)q.set("pageToken",tok);const d=await gapi(`/calendars/${encodeURIComponent(calId)}/events?${q}`);items.push(...(d.items||[]));tok=d.nextPageToken;if(!tok)break}
   return items}
 function banner(text,label,action){const b=$("#banner");if(!b)return;if(!text){b.hidden=true;return}
