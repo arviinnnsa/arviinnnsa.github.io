@@ -315,7 +315,7 @@ ul.fml li{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.82em;bac
 })();
 </script>
 
-</head><body>
+<link rel="stylesheet" href="focus.css"></head><body>
 <style id="arvin-launch-css">
 /* start-up screen, inspired by the iPhone boot screen */
 #launch{position:fixed!important;inset:0!important;z-index:9999!important;background:#000!important;overflow:hidden;opacity:1;transition:opacity .6s ease!important;display:block!important}
@@ -1323,6 +1323,7 @@ body{letter-spacing:-.011em}
 
   <section aria-labelledby="tdTitle" id="today" data-tab="today">
     <div class="shead"><div><h2 id="tdTitle">Today</h2><p>What's next, when to leave, and what to get done.</p></div><div class="nav"><button class="bt secondary" id="planWkBtn2">Plan your week →</button></div></div>
+    <div id="focusBox" aria-label="Focus"></div>
     <div id="briefBox" aria-label="Brief"></div>
     <div id="qaddWrap" style="margin-bottom:20px"></div>
     <div class="today" id="todayBox"></div>
@@ -6489,4 +6490,6 @@ html[data-ap-tab="today"] main.page>#banner,html[data-ap-tab="today"] main.page>
 
 
 
+<script src="focus-street.js"></script>
+<script src="focus.js"></script>
 </body></html>
