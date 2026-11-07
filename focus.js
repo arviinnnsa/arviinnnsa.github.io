@@ -4,7 +4,6 @@
 (function () {
   "use strict";
 
-  const KEY = "ap-focus-v1";
   const $ = id => document.getElementById(id);
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -51,12 +50,25 @@ Errands
 - Return package
 - Pick up groceries`;
 
-  /* ---------- storage: { "YYYY-MM-DD": { tasks, errands } } ---------- */
-  let store = {};
-  try { store = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { store = {}; }
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
-  const prune = () => { const t = dayKey(); for (const k of Object.keys(store)) if (k < t) delete store[k]; };
-  const today = () => store[dayKey()] || null;
+  /* ---------- storage: ST.focus = { "YYYY-MM-DD": { tasks, errands } } ----------
+     Lives in the app's own synced state (ST), so it follows the account to other devices. */
+  let lastSig = "";
+  const appState = () => (window.apState && window.apState.get()) || null;
+  const bag = () => {
+    const s = appState();
+    if (!s) return {};
+    if (!s.focus || typeof s.focus !== "object") s.focus = {};
+    return s.focus;
+  };
+  const today = () => bag()[dayKey()] || null;
+  const sig = () => JSON.stringify(today());
+  const save = () => { lastSig = sig(); if (window.apState) window.apState.save(); };
+  const prune = () => {
+    const b = bag(), t = dayKey();
+    let changed = false;
+    for (const k of Object.keys(b)) if (k < t) { delete b[k]; changed = true; }
+    return changed;
+  };
 
   /* ---------- plan text <-> data ---------- */
   function parse(text, all) {
@@ -87,8 +99,9 @@ Errands
     if (!tasks.length && !errands.length) return { error: "Nothing to save yet. Add a task with its parts, or an Errands list." };
     /* editing a plan keeps progress for tasks and errands whose names haven't changed */
     const prev = all[date];
+    const keep = prev && prev.tasks;
     if (prev) {
-      tasks.forEach(t => { const o = prev.tasks.find(x => x.t === t.t); if (o && o.parts.length === t.parts.length) { t.n = o.n; t.left = o.left; } });
+      tasks.forEach(t => { const o = keep.find(x => x.t === t.t); if (o && o.parts.length === t.parts.length) { t.n = o.n; t.left = o.left; } });
       errands.forEach(e => { const o = prev.errands.find(x => x.t === e.t); if (o) e.done = o.done; });
     }
     return { date, plan: { tasks, errands } };
@@ -107,9 +120,9 @@ Errands
   }
 
   function commit(text) {
-    const r = parse(text, store);
+    const r = parse(text, bag());
     if (r.error) return r.error;
-    store[r.date] = r.plan;
+    bag()[r.date] = r.plan;
     prune(); save(); buildAll();
     return null;
   }
@@ -322,12 +335,15 @@ Errands
       if (pageEl.classList.contains("open")) closePage();
     });
 
-    /* new day: switch to that day's plan without a reload */
+    /* new day, or a change that arrived from another device: rebuild (not while the task page is open) */
     setInterval(() => {
-      if (dayKey() !== curDay) { curDay = dayKey(); prune(); save(); buildAll(); }
-    }, 60000);
+      if (pageEl.classList.contains("open")) return;
+      if (dayKey() !== curDay) { curDay = dayKey(); if (prune()) save(); buildAll(); return; }
+      if (sig() !== lastSig) buildAll();
+    }, 3000);
 
-    prune(); save(); buildAll();
+    if (prune()) save();
+    buildAll();
   }
 
   function buildAll() {
@@ -364,6 +380,7 @@ Errands
       }
     }
     cardsEl.hidden = !(p && (p.tasks.length || p.errands.length));
+    lastSig = sig();
     refresh(null);
   }
 
@@ -411,7 +428,7 @@ Errands
   }
 
   function emptyHTML() {
-    const tm = store[dayKey(1)];
+    const tm = bag()[dayKey(1)];
     return `<div class="fo-empty"><h3>Nothing planned for today</h3><p>Plan the night before or right before you start. Ask Claude to split each big task into parts, then paste the plan here.</p>${tm ? `<p>Tomorrow's plan is set: ${tm.tasks.length} task${tm.tasks.length === 1 ? "" : "s"}${tm.errands.length ? ` and ${tm.errands.length} errands` : ""}. It starts tomorrow.</p>` : ""}</div>`;
   }
 

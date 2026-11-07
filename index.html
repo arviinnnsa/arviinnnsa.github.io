@@ -1299,7 +1299,7 @@ body{letter-spacing:-.011em}
 <header class="bar" id="bar">
   <div class="bar-in">
     <p class="wordmark kn-wm" aria-label="Arvin"><b>Arvin</b></p>
-    <nav class="topnav" aria-label="Sections"><button data-t="today">Today</button><button data-t="week">Schedule</button><button data-t="school">School</button><button data-t="exams">Exams</button><button data-t="tutor">Work</button><button data-t="todo">Me</button></nav>
+    <nav class="topnav" aria-label="Sections"><button data-t="today">Today</button><button data-t="week">Schedule</button><button data-t="school">School</button><button data-t="exams">Exams</button><button data-t="todo">Me</button></nav>
     <div class="today-lbl" id="todayLbl" hidden></div>
     <div class="hdr-r">
       <button class="icon" id="jumpBtn" aria-label="Go to schedule"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></button>
@@ -1403,7 +1403,7 @@ body{letter-spacing:-.011em}
   <button data-t="week"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Schedule</button>
   <button data-t="school"><svg viewBox="0 0 24 24"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z"/><path d="M6.5 11.5v4.2c1.6 1.5 3.4 2.3 5.5 2.3s3.9-.8 5.5-2.3v-4.2M21.5 9.5v5"/></svg>School</button>
   <button data-t="exams"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>Exams</button>
-  <button data-t="tutor"><svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="12.5" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12.5h17"/></svg>Work</button>
+  
   <button data-t="todo"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4s6.3 1.8 7.5 5.4"/></svg>Me<span class="badge" id="todoBadge" hidden></span></button>
 </nav>
 <div class="room" id="room" role="dialog" aria-modal="true" aria-labelledby="rmTitle" hidden>
@@ -4296,6 +4296,7 @@ function saveST(now){clearTimeout(stTimer);const go=()=>{
     const ak=Object.keys(ST.alerted);if(ak.length>300)for(const x of ak.slice(0,ak.length-300))delete ST.alerted[x];
     ST.todos=ST.todos.filter(t=>!t.done||!t.doneAt||t.doneAt>Date.now()-30*864e5);
     store.saveState()};if(now)go();else stTimer=setTimeout(go,600)}
+window.apState={get:()=>ST,save:n=>saveST(n)};
 
 /* ---------- places, drive times and leave-by ---------- */
 function placeOf(e){
@@ -4679,7 +4680,7 @@ async function moveEvent(e,k,s,en){
   catch(err){e.start=was.start;e.end=was.end;refresh();syncLabel?.();toast(err?.code==="none"?"Moving events works when Google Calendar is connected":err?.code==="needs_reauth"||err?.code==="auth"?"Sign in to Google again, then try":"Couldn't move it in Google Calendar. Try again.")}}
 
 /* ---------- tabs (iPhone) and swipe ---------- */
-let TAB=(()=>{try{const t=localStorage.getItem("ap-tab");return ["today","week","school","exams","tutor","todo"].includes(t)?t:"today"}catch(e){return "today"}})();
+let TAB=(()=>{try{const t=localStorage.getItem("ap-tab");return ["today","week","school","exams","todo"].includes(t)?t:"today"}catch(e){return "today"}})();
 function goTab(t){if(t==="habits")t="todo";TAB=t;applyTab(true);scrollTo({top:0,behavior:"auto"});if(t==="week")setTimeout(()=>{try{render()}catch(e){}},30)}window.goTab=goTab;window.apSync=async()=>{try{if(SITE)await siteSync();else await nativeSync()}catch(e){}try{render()}catch(e){}};
 function applyTab(anim){const nw=narrow();
   document.querySelectorAll("[data-tab]").forEach(el=>{const on=el.dataset.tab.split(" ").includes(TAB);el.classList.toggle("off",!on);if(on&&anim){el.classList.remove("enter");void el.offsetWidth;el.classList.add("enter")}});
