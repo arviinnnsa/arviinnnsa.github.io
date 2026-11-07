@@ -395,6 +395,7 @@ Errands
 
     const d = tasks.reduce((a, t) => a + t.n, 0), n = tasks.reduce((a, t) => a + t.parts.length, 0);
     $("foTot").innerHTML = `${d}<small>/${n}</small>`;
+    $("foTot").parentElement.hidden = !n;
 
     const active = tasks.find(t => t.n < t.parts.length);
     tasks.forEach((t, i) => {

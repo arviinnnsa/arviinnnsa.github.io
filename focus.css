@@ -1,6 +1,6 @@
 /* ================= Focus: today's three + errands (Nov 7) ================= */
 :root{--fo-spring:cubic-bezier(.34,1.56,.64,1);--fo-out:cubic-bezier(.22,1,.36,1)}
-#focusBox .fo-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:8px 0 18px}
+#focusBox .fo-head{max-width:760px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:8px 0 18px}
 #focusBox .fo-head h2{font-size:clamp(34px,6vw,56px);font-weight:700;letter-spacing:-.03em;line-height:1.02;margin:0}
 #focusBox .fo-head p{color:var(--m-mute);font-size:15px;margin-top:6px}
 #focusBox .fo-count{text-align:right;flex:none}
