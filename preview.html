@@ -4025,8 +4025,10 @@ function openEvent(e,focusNotes){
   const dl=descLines(e.desc);if(dl.length&&!e.plan&&e.cal!=="holiday")body.append(h("div",{class:"sec"},h("h4",{},"From Google Calendar"),h("div",{class:"brief"},dl.map(l=>h("div",{},l)))));
   const nn=notes[e.id]||{text:"",checklist:[]},saved=h("em",{id:"noteSaved"},store.kind==="db"?"Saves to your account":store.kind==="native"?"Saves in the app":"Saves on this device");
   const ta=h("textarea",{id:"note-"+e.id,placeholder:placeholderFor(c.key),"aria-label":"Notes"});ta.value=nn.text||"";
-  ta.addEventListener("input",()=>{saved.textContent="Saving…";queueNote(e.id,{text:ta.value})});
-  body.append(h("div",{class:"sec"},h("h4",{},"Notes",saved),ta));
+  ta.addEventListener("input",()=>{saved.textContent="Saving…";queueNote(e.id,{text:ta.value});if(c.key==="class")mirrorText(e)});
+  if(GD.ready&&store.kind==="local")saved.textContent="Syncs to iPhone and Mac";
+  body.append(h("div",{class:"sec"},h("h4",{},c.key==="class"?"Lecture notes":"Notes",saved),ta));
+  if(c.key==="class"&&GD.on)body.append(photoSec(e));
   const ul=h("ul",{class:"checks"});
   const draw=()=>{ul.textContent="";(notes[e.id]?.checklist||[]).forEach((it,i)=>{const cb=h("input",{type:"checkbox",id:`ck-${e.id}-${i}`});cb.checked=!!it.done;
     cb.onchange=()=>{const l=[...(notes[e.id]?.checklist||[])];l[i]={...l[i],done:cb.checked};queueNote(e.id,{checklist:l},true);draw()};
@@ -4075,7 +4077,7 @@ function openPlan(k,m,pre={}){
 const SITE=window.__AP_SITE===true;
 const GA={get cid(){try{return localStorage.getItem("ap-cid")||""}catch(e){return""}},token:null,exp:0,authError:null};
 const HOLIDAY_CAL="en-gb.canadian#holiday@group.v.calendar.google.com";
-const REDIRECT=()=>location.origin+location.pathname;
+const REDIRECT=()=>location.origin+"/";/* preview: Google sign-in returns to the main app */
 if(SITE){
   try{const t=JSON.parse(localStorage.getItem("ap-tok")||"null");if(t&&t.exp>Date.now()){GA.token=t.token;GA.exp=t.exp}}catch(e){}
   if(location.hash.length>1){const p=new URLSearchParams(location.hash.slice(1));
@@ -4087,7 +4089,7 @@ if(SITE){
 function signIn(silent){
   if(!GA.cid){openSetup();return}
   const q=new URLSearchParams({client_id:GA.cid,redirect_uri:REDIRECT(),response_type:"token",include_granted_scopes:"true",
-    scope:"https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly"});
+    scope:"https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly"+(silent?"":" https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file")});
   if(silent)q.set("prompt","none");
   location.href="https://accounts.google.com/o/oauth2/v2/auth?"+q;
 }
@@ -4164,6 +4166,7 @@ function openSetup(){
     body.append(h("div",{class:"actions"},
       h("button",{class:"bt primary",onclick:()=>signIn(false)},GA.token?"Sign in again":"Sign in with Google"),
       h("button",{class:"bt secondary",onclick:()=>{signOut();closeSheet();toast("Signed out")}},"Sign out")));
+    if(GD.on)body.append(gdRow());
   }
   const step=(n,title,...rest)=>h("li",{style:"display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:12px 0;border-bottom:1px solid var(--line-soft)"},
     h("b",{style:"font-weight:500;color:var(--muted)"},n),h("div",{style:"min-width:0"},h("div",{style:"font-weight:500"},title),...rest));
@@ -4882,7 +4885,185 @@ $("#reviewBtn")&&($("#reviewBtn").onclick=openReview);$("#reviewBtn2")&&($("#rev
 applyTheme();setInterval(()=>{if(themeMode()==="auto"&&applyTheme())render()},60000);
 setInterval(nfyTick,30000);setTimeout(nfyTick,4000);
 
-store.init();initSync();
+
+/* ================= iPhone ↔ Mac sync + lecture-note photos (private, through your Google Drive) =================
+   - Notes, Focus plans, planned blocks and settings: one hidden file in Drive's app-data space (only this app can see it).
+   - Photos of paper notes + a text copy of typed lecture notes: a visible "ARVIN Notes" folder, one sub-folder per course. */
+const GD={on:SITE&&!NATIVE,ready:false,state:"off",fileId:null,lastMod:null,pushT:null,busy:false,lastRemoteSig:""};
+const DRV="https://www.googleapis.com/drive/v3",UPL="https://www.googleapis.com/upload/drive/v3",DFILE="arvin-data.json";
+let SM=(()=>{try{return JSON.parse(localStorage.getItem("ap-sync-meta"))||{}}catch(e){return{}}})();
+SM.deleted=SM.deleted||{};SM.stAt=SM.stAt||{};SM.stSig=SM.stSig||{};SM.folders=SM.folders||{};
+function smSave(){try{localStorage.setItem("ap-sync-meta",JSON.stringify(SM))}catch(e){}}
+function hsh(str){let x=5381;for(let i=0;i<str.length;i++)x=((x<<5)+x+str.charCodeAt(i))|0;return x.toString(36)+":"+str.length}
+function stampST(){const now=Date.now();let ch=false;for(const k of Object.keys(ST)){const sg=hsh(JSON.stringify(ST[k])??"");if(SM.stSig[k]!==sg){SM.stSig[k]=sg;SM.stAt[k]=now;ch=true}}if(ch)smSave()}
+async function dfetch(url,opts={}){
+  if(!GA.token||GA.exp<Date.now())throw{code:"auth"};
+  const r=await fetch(url,{...opts,headers:{Authorization:"Bearer "+GA.token,...(opts.headers||{})}});
+  if(r.status===401)throw{code:"auth"};
+  if(r.status===403){let j={};try{j=await r.json()}catch(e){}const rs=((j.error&&j.error.errors)||[])[0]?.reason||"",m=(j.error&&j.error.message)||"";
+    if(/insufficient|scope/i.test(rs+" "+m))throw{code:"scope"};
+    if(/accessNotConfigured|not been used|disabled/i.test(rs+" "+m))throw{code:"api"};throw{code:"http",status:403,message:m}}
+  if(!r.ok){let m="";try{m=(await r.json()).error?.message||""}catch(e){}throw{code:"http",status:r.status,message:m}}
+  return r}
+const djson=async(u,o)=>(await dfetch(u,o)).json();
+function multipart(meta,blob,type){const b="ap"+Math.random().toString(36).slice(2);
+  return{headers:{"Content-Type":"multipart/related; boundary="+b},body:new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: ${type}\r\n\r\n`,blob,`\r\n--${b}--`])}}
+
+/* ---- the synced document ---- */
+const stripBlock=({plan,hidden,replaces,cal,rem,desc,...r})=>r;
+function docBody(){stampST();return{notes,planned:planned.map(stripBlock),deleted:SM.deleted,state:ST,stAt:SM.stAt}}
+const sigOf=d=>hsh(JSON.stringify({n:d.notes||{},p:(d.planned||[]).map(stripBlock).sort((a,b)=>a.id<b.id?-1:1),x:d.deleted||{},s:d.stAt||{}}));
+const isObj=v=>v&&typeof v==="object"&&!Array.isArray(v);
+function union(a,b){/* first sync on a device: keep everything from both sides */
+  if(isObj(a)&&isObj(b)){const o={...a};for(const k of Object.keys(b))o[k]=k in a?union(a[k],b[k]):b[k];return o}
+  if(Array.isArray(a)&&Array.isArray(b)){if(a.every(x=>x&&x.id)&&b.every(x=>x&&x.id)){const m=new Map(a.map(x=>[x.id,x]));for(const x of b)if(!m.has(x.id))m.set(x.id,x);return[...m.values()]}return b.length>=a.length?b:a}
+  return b===undefined||b===null||b===""?a:b}
+const tsOf=p=>p&&(p.u||p.createdAt)||0;
+function mergeIn(R,first){let changed=false;
+  for(const[k,v]of Object.entries(R.deleted||{}))if(!(SM.deleted[k]>=v))SM.deleted[k]=v;
+  for(const[id,rn]of Object.entries(R.notes||{})){const ln=notes[id];
+    if(!ln||(first?false:(rn.u||0)>(ln.u||0))){if(JSON.stringify(ln)!==JSON.stringify(rn)){notes[id]=rn;changed=true}}
+    else if(first&&ln){const m=union(ln,rn);m.photos=union(ln.photos||[],rn.photos||[]);if(!ln.text&&rn.text)m.text=rn.text;else m.text=ln.text;if(JSON.stringify(m)!==JSON.stringify(ln)){notes[id]={...m,u:Date.now()};changed=true}}}
+  const by=new Map(planned.map(p=>[p.id,p]));
+  for(const rp of R.planned||[]){const lp=by.get(rp.id);if((SM.deleted[rp.id]||0)>=tsOf(rp))continue;
+    if(!lp||tsOf(rp)>tsOf(lp)){by.set(rp.id,{...rp,plan:true,cal:"plan",rem:[],desc:rp.notes||""});changed=true}}
+  for(const[id,ts]of Object.entries(SM.deleted))if(by.has(id)&&ts>=tsOf(by.get(id))){by.delete(id);delete notes[id];changed=true}
+  planned=[...by.values()];
+  stampST();const rs=R.state||{},ra=R.stAt||{};let next=null;
+  for(const k of Object.keys(rs)){
+    if(first){const m=union(ST[k],rs[k]);if(JSON.stringify(m)!==JSON.stringify(ST[k])){next=next||{...ST};next[k]=m}}
+    else if((ra[k]||0)>(SM.stAt[k]||0)){next=next||{...ST};next[k]=rs[k];SM.stAt[k]=ra[k]}}
+  if(next){setST(next);for(const k of Object.keys(ST))SM.stSig[k]=hsh(JSON.stringify(ST[k])??"");if(first)stampST();changed=true}
+  smSave();return changed}
+
+async function gdFindFile(){const q=encodeURIComponent(`name='${DFILE}'`);
+  const d=await djson(`${DRV}/files?spaces=appDataFolder&q=${q}&fields=files(id,modifiedTime)&orderBy=modifiedTime desc`);return(d.files||[])[0]||null}
+function gdStatus(state,msg){GD.state=state;GD.msg=msg||"";const el=$("#gdRow");if(el)el.replaceWith(gdRow());const sv=$("#noteSaved");if(sv&&state==="on"&&/device/.test(sv.textContent))sv.textContent="Syncs to iPhone and Mac"}
+function gdFail(e){
+  if(e&&e.code==="scope"){GD.ready=false;gdStatus("need");if(!GD.asked){GD.asked=1;banner("New: your notes and Focus plans can now sync between iPhone and Mac.","Turn on",()=>{banner(null);signIn(false)})}return}
+  if(e&&e.code==="api"){GD.ready=false;gdStatus("api");return}
+  if(e&&e.code==="auth"){GD.ready=false;gdStatus("off");return}
+  gdStatus(GD.ready?"on":"err",navigator.onLine?"Couldn't reach Google Drive":"Offline, will sync when you're back online")}
+async function gdPull(){
+  if(!GD.on||GD.busy||!navigator.onLine||!GA.token||GA.exp<Date.now())return;GD.busy=true;
+  try{const f=await gdFindFile();
+    if(!f){GD.fileId=null;GD.ready=true;SM.joined=1;smSave();await gdPush(true);gdStatus("on");return}
+    GD.fileId=f.id;GD.ready=true;
+    if(f.modifiedTime!==GD.lastMod||!SM.joined){
+      const R=await djson(`${DRV}/files/${f.id}?alt=media`);GD.lastMod=f.modifiedTime;GD.lastRemoteSig=sigOf(R);
+      const first=!SM.joined,changed=mergeIn(R,first);SM.joined=1;smSave();
+      if(changed){origLocal.call(store);if(!$("#sheet").classList.contains("on"))refresh();else EV=allEvents()}
+      if(first&&!SM.welcomed){SM.welcomed=1;smSave();toast("iPhone–Mac sync is on")}}
+    if(sigOf(docBody())!==GD.lastRemoteSig)await gdPush(true);
+    gdStatus("on")}
+  catch(e){gdFail(e)}finally{GD.busy=false}}
+async function gdPush(inside){
+  if(!GD.on||!GD.ready||!navigator.onLine)return;clearTimeout(GD.pushT);
+  const d=docBody(),sig=sigOf(d);if(sig===GD.lastRemoteSig&&GD.fileId)return;
+  const blob=new Blob([JSON.stringify({v:1,at:Date.now(),...d})],{type:"application/json"});
+  try{let r;
+    if(GD.fileId)r=await djson(`${UPL}/files/${GD.fileId}?uploadType=media&fields=id,modifiedTime`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:blob,keepalive:blob.size<60000});
+    else{const m=multipart({name:DFILE,parents:["appDataFolder"]},blob,"application/json");r=await djson(`${UPL}/files?uploadType=multipart&fields=id,modifiedTime`,{method:"POST",...m});GD.fileId=r.id}
+    GD.lastMod=r.modifiedTime;GD.lastRemoteSig=sig;if(!inside)gdStatus("on")}
+  catch(e){if(!inside)gdFail(e);else throw e}}
+function gdSoon(){if(!GD.on||!GD.ready)return;clearTimeout(GD.pushT);GD.pushT=setTimeout(()=>gdPush(),2000)}
+
+/* stamp changes so the newest edit wins on the other device */
+const origLocal=store.local,origSaveNote=store.saveNote,origAdd=store.addBlock,origMove=store.moveBlock,origDel=store.delBlock;
+store.local=function(){origLocal.call(this);gdSoon()};
+store.saveNote=function(id,val){val={...val,u:Date.now()};return origSaveNote.call(this,id,val)};
+store.addBlock=async function(d){const before=new Set(planned.map(p=>p.id));await origAdd.call(this,d);for(const p of planned)if(!before.has(p.id)){p.u=Date.now()}this.local()};
+store.moveBlock=async function(id,ns,ne){await origMove.call(this,id,ns,ne);const b=planned.find(p=>p.id===id);if(b){b.u=Date.now();this.local()}};
+store.delBlock=async function(id){SM.deleted[id]=Date.now();smSave();return origDel.call(this,id)};
+function gdStart(){if(!GD.on)return;
+  gdPull();setInterval(()=>{if(!document.hidden)gdPull()},60000);
+  document.addEventListener("visibilitychange",()=>{if(document.hidden){flushNote();if(GD.ready)gdPush()}else gdPull()});
+  addEventListener("online",()=>{gdPull();gdPhotoQueue()});
+  setTimeout(gdPhotoQueue,3000)}
+
+/* sync row in Google connection settings */
+function gdRow(){const st=GD.state,tx={on:"Notes, Focus plans and settings sync between your iPhone and Mac.",need:"Off. Allow Google Drive once to sync between iPhone and Mac.",api:"Google Drive is switched off in your Google Cloud project.",err:GD.msg||"Couldn't reach Google Drive",off:"Sign in with Google to sync between iPhone and Mac."}[st]||"";
+  const row=h("div",{class:"sec",id:"gdRow"},h("h4",{},"iPhone ↔ Mac sync",h("em",{},st==="on"?"On":st==="err"?"Paused":"Off")),h("p",{class:"hint",style:"margin:0 0 10px"},tx));
+  if(st==="need"||st==="off")row.append(h("button",{class:"bt primary",onclick:()=>signIn(false)},"Turn on sync"));
+  if(st==="api")row.append(h("a",{class:"bt secondary",href:"https://console.cloud.google.com/apis/library/drive.googleapis.com",target:"_blank",rel:"noopener",style:"text-decoration:none"},"Switch on Google Drive API ↗"),h("p",{class:"hint",style:"margin:8px 0 0"},"Pick your planner's project at the top, press Enable, then come back and reopen the app."));
+  if(st==="on")row.append(h("button",{class:"bt secondary",onclick:async()=>{await gdPull();toast(GD.state==="on"?"Synced":"Couldn't sync right now")}},"Sync now"));
+  return row}
+
+/* ================= lecture-note photos ================= */
+const PH_CACHE="ap-photos-v1",phURL=new Map();
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open("ap-photos",1);r.onupgradeneeded=()=>r.result.createObjectStore("q");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbDo(mode,fn){const db=await idb();return new Promise((res,rej)=>{const t=db.transaction("q",mode),st=t.objectStore("q"),r=fn(st);t.oncomplete=()=>res(r&&r.result);t.onerror=()=>rej(t.error)})}
+async function shrink(file){try{const bm=await createImageBitmap(file,{imageOrientation:"from-image"}),k=Math.min(1,2000/Math.max(bm.width,bm.height)),c=document.createElement("canvas");
+  c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);c.getContext("2d").drawImage(bm,0,0,c.width,c.height);
+  return await new Promise(r=>c.toBlob(b=>r(b||file),"image/jpeg",.82))}catch(e){return file}}
+function courseFolderName(e){const m=(e.title||"").match(COURSE);return m?`${m[1]} ${m[2]}`:"Other classes"}
+async function gdFolder(name,parent){const key=(parent||"root")+"/"+name;if(SM.folders[key])return SM.folders[key];
+  const q=encodeURIComponent(`name='${name.replace(/'/g,"\\'")}' and mimeType='application/vnd.google-apps.folder' and trashed=false${parent?` and '${parent}' in parents`:""}`);
+  const f=(await djson(`${DRV}/files?q=${q}&fields=files(id)&spaces=drive`)).files||[];
+  const id=f[0]?f[0].id:(await djson(`${DRV}/files?fields=id`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,mimeType:"application/vnd.google-apps.folder",parents:parent?[parent]:undefined})})).id;
+  SM.folders[key]=id;smSave();return id}
+async function lectureFolder(e){const root=await gdFolder("ARVIN Notes");return gdFolder(courseFolderName(e),root)}
+const lectureName=e=>`${e.start.slice(0,10)} ${clean(e.title)}`.replace(/[\\/:*?"<>|]/g,"-");
+async function photoBlob(p){if(p.tmp){const b=await idbDo("readonly",st=>st.get(p.tmp));return b&&b.blob}
+  const c=await caches.open(PH_CACHE),key="/ap-photo/"+p.id,hit=await c.match(key);if(hit)return hit.blob();
+  const r=await dfetch(`${DRV}/files/${p.id}?alt=media`),b=await r.blob();try{await c.put(key,new Response(b))}catch(e){}return b}
+async function photoSrc(p){const k=p.id||p.tmp;if(phURL.has(k))return phURL.get(k);const b=await photoBlob(p);if(!b)return null;const u=URL.createObjectURL(b);phURL.set(k,u);return u}
+function setPhotos(id,list){queueNote(id,{photos:list},true)}
+async function addPhotos(e,files,redraw){
+  const list=[...((notes[e.id]||{}).photos||[])];
+  for(const f of files){const blob=await shrink(f),tmp="t"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    await idbDo("readwrite",st=>st.put({blob,ev:e.id,title:e.title,start:e.start,n:list.length+1},tmp));list.push({tmp,at:Date.now()})}
+  setPhotos(e.id,list);redraw();gdPhotoQueue(redraw)}
+let phBusy=false;
+async function gdPhotoQueue(redraw){if(phBusy||!GD.ready||!navigator.onLine)return;phBusy=true;
+  try{const keys=await idbDo("readonly",st=>st.getAllKeys())||[];
+    for(const tmp of keys){const it=await idbDo("readonly",st=>st.get(tmp));if(!it)continue;
+      const ev={id:it.ev,title:it.title,start:it.start},parent=await lectureFolder(ev);
+      const m=multipart({name:`${lectureName(ev)} — page ${it.n}.jpg`,parents:[parent],appProperties:{apEvent:String(it.ev).slice(0,100)}},it.blob,"image/jpeg");
+      const r=await djson(`${UPL}/files?uploadType=multipart&fields=id`,{method:"POST",...m});
+      try{const c=await caches.open(PH_CACHE);await c.put("/ap-photo/"+r.id,new Response(it.blob))}catch(e){}
+      if(phURL.has(tmp)){phURL.set(r.id,phURL.get(tmp))}
+      const n=notes[it.ev]||{text:"",checklist:[]},list=(n.photos||[]).map(p=>p.tmp===tmp?{id:r.id,at:p.at}:p);
+      if(!list.some(p=>p.id===r.id))list.push({id:r.id,at:Date.now()});
+      setPhotos(it.ev,list);await idbDo("readwrite",st=>st.delete(tmp))}
+    if(keys.length&&redraw)redraw()}
+  catch(e){gdFail(e)}finally{phBusy=false}}
+function viewer(eid,start){const list=(notes[eid]||{}).photos||[];if(!list.length)return;let i=start;
+  const img=h("img",{alt:"Photo of your notes"}),ctr=h("span",{class:"pv-n"});
+  const ov=h("div",{class:"pv",role:"dialog","aria-label":"Notes photos"});
+  const show=async()=>{ctr.textContent=`${i+1} / ${list.length}`;img.src=await photoSrc(list[i])||""};
+  const go=d=>{i=(i+d+list.length)%list.length;show()};
+  const close=()=>{ov.classList.remove("on");setTimeout(()=>ov.remove(),250);removeEventListener("keydown",key)};
+  const key=ev=>{if(ev.key==="Escape")close();if(ev.key==="ArrowRight")go(1);if(ev.key==="ArrowLeft")go(-1)};
+  const del=async()=>{const p=list[i];if(!confirmDel.armed){confirmDel.armed=true;confirmDel.textContent="Tap again to delete";setTimeout(()=>{confirmDel.armed=false;confirmDel.textContent="Delete"},2500);return}
+    const nl=list.filter(x=>x!==p);setPhotos(eid,nl);
+    if(p.tmp)idbDo("readwrite",st=>st.delete(p.tmp)).catch(()=>{});else dfetch(`${DRV}/files/${p.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({trashed:true})}).catch(()=>{});
+    close();const sh=$("#phGrid");if(sh&&sh._redraw)sh._redraw()};
+  const confirmDel=h("button",{class:"pv-b",onclick:del},"Delete");
+  ov.append(h("div",{class:"pv-top"},ctr,h("div",{},confirmDel,h("button",{class:"pv-b",onclick:close,"aria-label":"Close"},"Done"))),img,
+    ...(list.length>1?[h("button",{class:"pv-a l","aria-label":"Previous",onclick:()=>go(-1)},"‹"),h("button",{class:"pv-a r","aria-label":"Next",onclick:()=>go(1)},"›")]:[]));
+  let sx=null;img.addEventListener("touchstart",ev=>{sx=ev.touches[0].clientX},{passive:true});img.addEventListener("touchend",ev=>{if(sx==null)return;const dx=ev.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)go(dx<0?1:-1);sx=null});
+  document.body.append(ov);addEventListener("keydown",key);requestAnimationFrame(()=>ov.classList.add("on"));show()}
+function photoSec(e){const grid=h("div",{class:"ph-grid",id:"phGrid"});
+  const draw=()=>{grid.textContent="";const list=(notes[e.id]||{}).photos||[];
+    list.forEach((p,i)=>{const im=h("img",{alt:`Notes page ${i+1}`,loading:"lazy"}),b=h("button",{class:"ph-t"+(p.tmp?" up":""),"aria-label":`Open page ${i+1}`,onclick:()=>viewer(e.id,i)},im);
+      photoSrc(p).then(u=>{if(u)im.src=u}).catch(()=>b.classList.add("bad"));grid.append(b)});
+    const inp=h("input",{type:"file",accept:"image/*",multiple:true,hidden:true});inp.onchange=()=>{if(inp.files.length)addPhotos(e,[...inp.files],draw)};
+    grid.append(h("label",{class:"ph-add"},inp,h("span",{class:"ph-plus"},"+"),h("small",{},list.length?"Add":"Add photos")))};
+  grid._redraw=draw;draw();
+  const note=GD.ready?"In Drive · ARVIN Notes":GD.state==="need"||GD.state==="off"?"Not backed up yet":"On this device for now";
+  return h("div",{class:"sec"},h("h4",{},"Photos of your notes",h("em",{},note)),grid)}
+
+/* text copy of typed lecture notes in the course folder, so Claude can read them from Drive */
+const txtT={};
+function mirrorText(e){if(!GD.ready)return;clearTimeout(txtT[e.id]);txtT[e.id]=setTimeout(async()=>{try{
+  const n=notes[e.id]||{},text=(n.text||"").trim(),chk=(n.checklist||[]).map(x=>`${x.done?"[x]":"[ ]"} ${x.t}`).join("\n");
+  const body=`${clean(e.title)}\n${e.start.slice(0,10)}\n\n${text}${chk?"\n\nChecklist\n"+chk:""}\n`,blob=new Blob([body],{type:"text/plain"});
+  if(n.tf){await dfetch(`${UPL}/files/${n.tf}?uploadType=media`,{method:"PATCH",headers:{"Content-Type":"text/plain"},body:blob});return}
+  if(!text)return;const parent=await lectureFolder(e),m=multipart({name:`${lectureName(e)} — notes.txt`,parents:[parent]},blob,"text/plain");
+  const r=await djson(`${UPL}/files?uploadType=multipart&fields=id`,{method:"POST",...m});queueNote(e.id,{tf:r.id},true)}catch(err){gdFail(err)}},4000)}
+
+store.init();initSync();gdStart();
 /* ================= School hub (Liquid Glass) ================= */
 (()=>{
 const SC_C={FMGT:"var(--k-fmgt)",ECON:"var(--k-econ)",POLI:"var(--k-poli)"};
@@ -6502,4 +6683,26 @@ html[data-ap-tab="today"] main.page>#banner,html[data-ap-tab="today"] main.page>
 var SEL=".tabbar button,.topnav button,[data-a],[data-l],.chip,.sc-chip,#foDone,#foSave,.fo-card,input[type=checkbox]:not([switch])";
 window.apHaptic=function(){var n=Date.now();if(n-last<60)return;last=n;try{L.click()}catch(e){}};
 document.addEventListener("click",function(e){if(e.target.closest&&e.target.closest("#apHap"))return;if(e.target.closest&&e.target.closest(SEL))apHaptic()},true);})();</script>
+<style id="arvin-notes-css">
+.ph-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+.ph-t,.ph-add{all:unset;box-sizing:border-box;position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--surface-2);cursor:pointer;transition:transform .15s}
+.ph-t:active,.ph-add:active{transform:scale(.96)}
+.ph-t img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-t.up::after{content:"";position:absolute;right:7px;bottom:7px;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:phspin .9s linear infinite}
+.ph-t.bad{outline:1px dashed var(--muted)}
+@keyframes phspin{to{transform:rotate(360deg)}}
+.ph-add{display:grid;place-content:center;justify-items:center;gap:4px;border:1px dashed var(--line-soft,rgba(127,127,127,.35));background:transparent;color:var(--muted)}
+.ph-plus{font-size:28px;line-height:1;font-weight:300}
+.ph-add small{font-size:12.5px}
+.pv{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.94);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);display:grid;place-items:center;opacity:0;transition:opacity .25s;padding:calc(env(safe-area-inset-top,0px) + 56px) 8px calc(env(safe-area-inset-bottom,0px) + 16px)}
+.pv.on{opacity:1}
+.pv img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;touch-action:pan-y pinch-zoom}
+.pv-top{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 10px;color:#f5f5f7}
+.pv-top div{display:flex;gap:8px}
+.pv-n{font-size:14px;opacity:.75;font-variant-numeric:tabular-nums}
+.pv-b{all:unset;cursor:pointer;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.14);color:#f5f5f7;font-size:14.5px;font-weight:500}
+.pv-a{all:unset;cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);color:#fff;font-size:28px}
+.pv-a.l{left:10px}.pv-a.r{right:10px}
+@media (hover:none){.pv-a{display:none}}
+</style>
 </body></html>
