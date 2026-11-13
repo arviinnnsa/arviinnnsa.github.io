@@ -316,7 +316,8 @@ ul.fml li{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.82em;bac
 </script>
 
 <link rel="stylesheet" href="focus.css">
-<link rel="stylesheet" href="projects.css"></head><body>
+<link rel="stylesheet" href="projects.css">
+<link rel="stylesheet" href="tasks.css"></head><body>
 <style id="arvin-launch-css">
 /* start-up screen, inspired by the iPhone boot screen */
 #launch{position:fixed!important;inset:0!important;z-index:9999!important;background:#000!important;overflow:hidden;opacity:1;transition:opacity .35s ease!important;display:block!important}
@@ -1299,7 +1300,7 @@ body{letter-spacing:-.011em}
 <header class="bar" id="bar">
   <div class="bar-in">
     <p class="wordmark kn-wm" aria-label="Arvin"><b>Arvin</b></p>
-    <nav class="topnav" aria-label="Sections"><button data-t="today">Today</button><button data-t="focus">Focus</button><button data-t="week">Schedule</button><button data-t="school">School</button><button data-t="exams">Exams</button><button data-t="todo">Me</button></nav>
+    <nav class="topnav" aria-label="Sections"><button data-t="today">Today</button><button data-t="focus">Focus</button><button data-t="week">Schedule</button><button data-t="school">School</button><button data-t="exams">Exams</button><button data-t="todo">List</button></nav>
     <div class="today-lbl" id="todayLbl" hidden></div>
     <div class="hdr-r">
       <button class="icon" id="jumpBtn" aria-label="Go to schedule"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></button>
@@ -1375,9 +1376,8 @@ body{letter-spacing:-.011em}
     <div class="workgrid" id="workBox"></div>
   </section>
 
-  <section aria-labelledby="toTitle" id="todo" data-tab="todo">
-    <div class="shead"><div><h2 id="toTitle">To-do.</h2><p>Small things, so they don't slip. Give one a day and it shows up on Today.</p></div></div>
-    <div id="todoBox" style="display:flex;flex-direction:column;gap:16px"></div>
+  <section aria-label="List" id="todo" data-tab="todo">
+    <div id="mlBox"></div>
   </section>
 
   <section aria-labelledby="hbTitle" id="habits" data-tab="habits">
@@ -1408,7 +1408,7 @@ body{letter-spacing:-.011em}
   <button data-t="school"><svg viewBox="0 0 24 24"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z"/><path d="M6.5 11.5v4.2c1.6 1.5 3.4 2.3 5.5 2.3s3.9-.8 5.5-2.3v-4.2M21.5 9.5v5"/></svg>School</button>
   <button data-t="exams"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>Exams</button>
   
-  <button data-t="todo"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4s6.3 1.8 7.5 5.4"/></svg>Me<span class="badge" id="todoBadge" hidden></span></button>
+  <button data-t="todo"><svg viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="4.5" cy="6.5" r="1.2" fill="currentColor"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor"/><circle cx="4.5" cy="17.5" r="1.2" fill="currentColor"/></svg>List<span class="badge" id="todoBadge" hidden></span></button>
 </nav>
 <div class="room" id="room" role="dialog" aria-modal="true" aria-labelledby="rmTitle" hidden>
   <div class="rm-top"><button class="rm-back" id="rmBack"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span id="rmBackTxt">Back</span></button><span class="rm-crumb" id="rmCrumb"></span><button class="icon" id="rmClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -5376,7 +5376,7 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!sheetEl)
 (()=>{
   const hb=document.querySelector('#tabbar button[data-t="habits"]');if(hb)hb.remove();
   const hs=document.getElementById("habits");if(hs)hs.dataset.tab="habits todo";
-  const tb=document.querySelector('#tabbar button[data-t="todo"]');if(tb)for(const n of [...tb.childNodes])if(n.nodeType===3&&n.textContent.trim())n.textContent="Me";
+  const tb=document.querySelector('#tabbar button[data-t="todo"]');if(tb)for(const n of [...tb.childNodes])if(n.nodeType===3&&n.textContent.trim())n.textContent="List";
   if(TAB==="habits")goTab("todo");else applyTab(false);
   const addAp=()=>{const body=$("#shBody");if(!body||body.querySelector(".kn-appear"))return;const m=themeMode();const row=h("div",{class:"kn-appear",role:"group","aria-label":"Appearance"});
     [["auto","Auto"],["light","Day"],["dark","Night"]].forEach(([k,t])=>row.append(h("button",{type:"button","aria-pressed":String(k===m),onclick:e=>{setTheme(k);row.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===e.currentTarget)))}},t)));
@@ -6679,6 +6679,7 @@ html[data-ap-tab="today"] main.page>#banner,html[data-ap-tab="today"] main.page>
 <script src="focus-street.js"></script>
 <script src="focus.js"></script>
 <script src="projects.js"></script>
+<script src="tasks.js"></script>
 <!-- native feel: no double-tap zoom + light haptic taps (iOS 18+) -->
 <style>html,body,button,a,label{touch-action:manipulation}#apHap{position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none}</style>
 <label id="apHap" aria-hidden="true"><input type="checkbox" switch tabindex="-1"></label>
