@@ -6,7 +6,7 @@
    - Inter font: saved on the device so the app looks the same offline.
    - Google Calendar, sign-in and weather requests are never cached here
      (the app keeps its own saved copy of your events). */
-const VERSION = "ap-v24";
+const VERSION = "ap-v25";
 const SHELL = VERSION + "-shell";
 const FONTS = "ap-fonts-v2";
 const FONT_CSS = "https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap";
@@ -14,7 +14,7 @@ const SPLASH = ["640x1136","750x1334","828x1792","1125x2436","1170x2532","1179x2
   "1242x2688","1260x2736","1284x2778","1290x2796","1320x2868"].map(s => "splash-ag-" + s + ".png");
 const CORE = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png",
   "icon-maskable-512.png", "apple-touch-icon.png", "favicon-48.png", "favicon.ico", ...SPLASH,
-  "focus.css", "focus.js", "projects.css", "projects.js", "tasks.css", "tasks.js", "focus-street.js", "img/focus/brief.webp", "img/focus/fmgt.webp",
+  "focus.css", "focus.js", "projects.css", "projects.js", "tasks.css", "tasks.js", "money.css", "money.js", "brain.js", "focus-street.js", "img/focus/brief.webp", "img/focus/fmgt.webp",
   "img/focus/gym0.webp", "img/focus/gym1.webp", "img/focus/gym2.webp", "img/focus/gym3.webp"];
 const NAV_TIMEOUT = 2500;
 
