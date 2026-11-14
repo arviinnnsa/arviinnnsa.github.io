@@ -317,7 +317,8 @@ ul.fml li{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.82em;bac
 
 <link rel="stylesheet" href="focus.css">
 <link rel="stylesheet" href="projects.css">
-<link rel="stylesheet" href="tasks.css"></head><body>
+<link rel="stylesheet" href="tasks.css"><link rel="stylesheet" href="money.css">
+</head><body>
 <style id="arvin-launch-css">
 /* start-up screen, inspired by the iPhone boot screen */
 #launch{position:fixed!important;inset:0!important;z-index:9999!important;background:#000!important;overflow:hidden;opacity:1;transition:opacity .35s ease!important;display:block!important}
@@ -4091,7 +4092,7 @@ if(SITE){
 function signIn(silent){
   if(!GA.cid){openSetup();return}
   const q=new URLSearchParams({client_id:GA.cid,redirect_uri:REDIRECT(),response_type:"token",include_granted_scopes:"true",
-    scope:"https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly"+(silent?"":" https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file")});
+    scope:"https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly"+(silent?"":" https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets")});
   if(silent)q.set("prompt","none");
   location.href="https://accounts.google.com/o/oauth2/v2/auth?"+q;
 }
@@ -4687,7 +4688,7 @@ async function moveEvent(e,k,s,en){
   catch(err){e.start=was.start;e.end=was.end;refresh();syncLabel?.();toast(err?.code==="none"?"Moving events works when Google Calendar is connected":err?.code==="needs_reauth"||err?.code==="auth"?"Sign in to Google again, then try":"Couldn't move it in Google Calendar. Try again.")}}
 
 /* ---------- tabs (iPhone) and swipe ---------- */
-let TAB=(()=>{try{const t=localStorage.getItem("ap-tab");return ["today","focus","week","school","exams","todo"].includes(t)?t:"today"}catch(e){return "today"}})();
+let TAB=(()=>{try{const t=localStorage.getItem("ap-tab");return ["today","focus","money","week","school","exams","todo"].includes(t)?t:"today"}catch(e){return "today"}})();
 function goTab(t){if(t==="habits")t="todo";TAB=t;applyTab(true);scrollTo({top:0,behavior:"auto"});if(t==="week")setTimeout(()=>{try{render()}catch(e){}},30)}window.goTab=goTab;window.apSync=async()=>{try{if(SITE)await siteSync();else await nativeSync()}catch(e){}try{render()}catch(e){}};
 function applyTab(anim){const nw=narrow();
   document.querySelectorAll("[data-tab]").forEach(el=>{const on=el.dataset.tab.split(" ").includes(TAB);el.classList.toggle("off",!on);if(on&&anim){el.classList.remove("enter");void el.offsetWidth;el.classList.add("enter")}});
@@ -6680,6 +6681,8 @@ html[data-ap-tab="today"] main.page>#banner,html[data-ap-tab="today"] main.page>
 <script src="focus.js"></script>
 <script src="projects.js"></script>
 <script src="tasks.js"></script>
+<script src="brain.js"></script>
+<script src="money.js"></script>
 <!-- native feel: no double-tap zoom + light haptic taps (iOS 18+) -->
 <style>html,body,button,a,label{touch-action:manipulation}#apHap{position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none}</style>
 <label id="apHap" aria-hidden="true"><input type="checkbox" switch tabindex="-1"></label>
