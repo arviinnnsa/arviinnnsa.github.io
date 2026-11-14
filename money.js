@@ -25,10 +25,11 @@
     const t = today(), add = n => { const d = dOf(t); d.setDate(d.getDate() + n); return keyOf(d); };
     return {
       sample: true, usdcad: 1.38, portfolio: 612.4,
-      settings: { invest_per_paycheque: 500 },
+      settings: { invest_per_paycheque: 500, pedalheads_rate: 22, cpp_rate: .0595, ei_rate: .0164, income_tax_rate: .05, gas_price: 1.75, fuel_l_per_100km: 7.5, km_richmond: 38, km_jericho: 33, km_fremont: 7, km_gtv: 28, km_parkroyal: 30, min_richmond: 40, min_jericho: 45, min_fremont: 15, min_gtv: 35, min_parkroyal: 50 },
       pay: [-35, -21, -7, 7, 21, 35].map((o, i) => ({ Payday: add(o), Hours: [30.5, 36.2, 33.9, 37.9, 38.2, 36.4][i], Gross: [671, 796.4, 745.8, 833.8, 840.4, 800.8][i], "Take-home": [586.4, 696, 651.8, 728.8, 734.5, 699.9][i], Invest: 500, Spend: [86.4, 196, 151.8, 228.8, 234.5, 199.9][i], Status: o < 0 ? "Paid" : o === 7 ? "Next" : "Upcoming" })),
       shifts: [[-6, "GTV", 5.08], [-5, "Sunday", 5.08], [-4, "Richmond", 4], [-2, "Fremont", 5.08]].map(([o, l, h], i) => ({ _row: 90 + i, Date: add(o), Location: l, Start: "07:55", End: "13:00", "Sched hours": h, "Confirmed hours": "", Status: "Assumed worked", Payday: add(7) })),
-      tutoring: [{ Date: add(-2), Amount: 25, Paid: "" }, { Date: add(-4), Amount: 25, Paid: "" }],
+      tutoring: [{ _row: 3, Date: add(-2), Amount: 25, Paid: "" }, { _row: 2, Date: add(-7), Amount: 25, Paid: "" }],
+      spending: [{ Date: add(-3), Amount: 18.4, What: "Gas" }, { Date: add(-1), Amount: 12.75, What: "Lunch" }],
       stocks: [
         { Ticker: "XEQT", Name: "iShares Core Equity ETF Portfolio", Currency: "CAD", Shares: 2.24, Price: 45.52, "Day change %": -0.0013, Value: 102.1, "Gain %": 0.007 },
         { Ticker: "NVDA", Name: "NVIDIA", Currency: "USD", Shares: 2.39, Price: 162.85, "Day change %": -0.0201, Value: 389.8, "Gain %": -0.068 }
@@ -41,7 +42,8 @@
     };
   })();
 
-  let open = false, editRow = null, busy = new Set();
+  let open = false, editRow = null, busy = new Set(), cover = { pool: "richmond", h: 4 };
+  const POOLS = [["richmond", "Richmond"], ["jericho", "Jericho"], ["fremont", "Fremont"], ["gtv", "GTV"], ["parkroyal", "Park Royal"]];
 
   function mount() {
     if ($("money")) return;
@@ -101,7 +103,22 @@
 
     /* shifts waiting for a tap: worked already, in a paycheque that hasn't landed yet */
     const toConfirm = (D.shifts || []).filter(s => s.Date && s.Date < t && s.Payday >= t && !/confirmed|adjusted/i.test(s.Status || ""));
-    const tutOwed = (D.tutoring || []).filter(r => !/^y/i.test(String(r.Paid || ""))).reduce((a, r) => a + (+r.Amount || 0), 0);
+    const tutOpen = (D.tutoring || []).filter(r => r.Date && (+r.Amount || 0) > 0 && !/^y/i.test(String(r.Paid || "")));
+    const tutOwed = tutOpen.reduce((a, r) => a + (+r.Amount || 0), 0);
+
+    /* left to spend: the spend part of your last cheque, minus what you've logged since */
+    const lastPaid = [...pay].reverse().find(p => p.Payday <= t && +p["Take-home"] > 0 && p.Payday !== nk) || null;
+    const since = lastPaid ? lastPaid.Payday : t;
+    const spentRows = (D.spending || []).filter(r => r.Date && r.Date >= since && +r.Amount).sort((a, b) => a.Date < b.Date ? 1 : -1);
+    const spent = spentRows.reduce((a, r) => a + (+r.Amount || 0), 0);
+    const left = (lastPaid ? +lastPaid.Spend || 0 : 0) - spent;
+
+    /* cover-shift check */
+    const S = D.settings || {}, rate = +S.pedalheads_rate || 22;
+    const netR = 1 - (+S.cpp_rate || 0) - (+S.ei_rate || 0) - (+S.income_tax_rate || 0);
+    const km = +S["km_" + cover.pool] || 30, mins = +S["min_" + cover.pool] || 35;
+    const cNet = cover.h * rate * netR, cGas = 2 * km * (+S.fuel_l_per_100km || 7.5) / 100 * (+S.gas_price || 1.75);
+    const cReal = (cNet - cGas) / (cover.h + 2 * mins / 60);
 
     /* stocks */
     const stocks = (D.stocks || []).map(s => {
@@ -156,6 +173,15 @@
         </section>` : ""}
 
         <section class="mo-sec">
+          <div class="mo-safe"><h3>Left to spend</h3><b class="${left < 0 ? "dn" : ""}">${money(left, false)}</b></div>
+          <p class="mo-hint">${lastPaid ? `From your ${short(lastPaid.Payday)} cheque, after the TFSA share. ${money(spent)} logged since.` : "Starts after your next cheque."}</p>
+          <div class="mo-list">
+            <div class="mo-add"><input id="moWhat" placeholder="What did you buy?" maxlength="40" aria-label="What"><input id="moAmt" class="amt" type="number" inputmode="decimal" step="0.01" min="0" placeholder="$" aria-label="Amount"><button class="mo-pill blue sm" data-act="spend">Add</button></div>
+            ${spentRows.slice(0, 4).map(r => `<div class="mo-row"><div class="mo-l"><b>${esc(r.What || "Purchase")}</b><span>${short(r.Date)}</span></div><b class="mo-amt">${money(+r.Amount)}</b></div>`).join("")}
+          </div>
+        </section>
+
+        <section class="mo-sec">
           <div class="mo-sh"><h3>Stocks</h3><span class="mo-tot"><b>${money(port)}</b><i class="${dayMove >= 0 ? "up" : "dn"}">${dayMove >= 0 ? "+" : "−"}${money(Math.abs(dayMove)).slice(1)} today</i></span></div>
           <div class="mo-list">${stocks.map(s => `
             <div class="mo-stk">
@@ -170,8 +196,25 @@
         <section class="mo-sec">
           <h3>Pay over time</h3>
           ${bars(pay, nk)}
-          ${tutOwed > 0 ? `<div class="mo-list"><div class="mo-row"><div class="mo-l"><b>Tutoring owed</b><span>Not marked paid yet</span></div><b class="mo-amt">${money(tutOwed)}</b></div></div>` : ""}
           <p class="mo-hint">Take-home is an estimate after tax, CPP and EI. Your real pay stub may differ slightly.</p>
+        </section>
+
+        ${tutOpen.length ? `
+        <section class="mo-sec">
+          <div class="mo-sh"><h3>Tutoring owed</h3><span class="mo-tot"><b>${money(tutOwed, false)}</b></span></div>
+          <div class="mo-list">${tutOpen.map(r => `<div class="mo-row${busy.has("t" + r._row) ? " busy" : ""}"><div class="mo-l"><b>${esc(dow(r.Date).slice(0, 3))}, ${short(r.Date)}</b><span>${money(+r.Amount, false)} session</span></div><button class="mo-paid" data-act="paid" data-row="${r._row}">Mark paid</button></div>`).join("")}</div>
+        </section>` : ""}
+
+        <section class="mo-sec">
+          <h3>Is a cover shift worth it?</h3>
+          <div class="mo-chips">${POOLS.map(([k, n]) => `<button class="mo-chip" data-act="pool" data-pool="${k}" aria-pressed="${cover.pool === k}">${n}</button>`).join("")}</div>
+          <p class="mo-hint"><span class="mo-step"><button data-act="hless" aria-label="Fewer hours">−</button>${hrs(cover.h)} hour shift<button data-act="hmore" aria-label="More hours">+</button></span></p>
+          <div class="mo-cover">
+            <div><b>${money(cNet, false)}</b><span>added take-home</span></div>
+            <div><b>${money(cGas, false)}</b><span>gas, round trip</span></div>
+            <div><b>${money(Math.max(cReal, 0))}</b><span>per hour with driving</span></div>
+          </div>
+          <p class="mo-hint">Uses ${km} km each way and ${mins} minutes of driving. These are estimates you can fix in the brain's Settings tab.</p>
         </section>
       </div>`;
   }
@@ -196,9 +239,30 @@
     if (!(v >= 0 && v <= 14)) { inp.focus(); return; }
     confirm(+inp.dataset.row, v);
   }
+  async function addSpend() {
+    const w = $("moWhat"), a = $("moAmt"), amt = parseFloat(a.value);
+    if (!(amt > 0)) { a.focus(); return; }
+    const st = B().get(); if (!st.data) { B().connect(); return; }
+    const what = w.value.trim() || "Purchase";
+    st.data.spending.push({ Date: today(), Amount: amt, What: what }); draw();
+    try { await B().append("Spending!A1", [[today(), amt, what, "", "App"]]); } catch (e) { if (e && e.code === "auth") B().connect(); }
+  }
+  async function markPaid(row) {
+    const st = B().get(); if (!st.data) return;
+    const r = st.data.tutoring.find(x => x._row === row); if (!r) return;
+    busy.add("t" + row); draw();
+    try { await B().write(`Tutoring!E${row}:F${row}`, [["Yes", today()]]); r.Paid = "Yes"; B().log("Marked tutoring paid", "Tutoring", r.Date); }
+    catch (e) { if (e && e.code === "auth") B().connect(); }
+    busy.delete("t" + row); draw();
+  }
   function onClick(e) {
     const b = e.target.closest("[data-act]"); if (!b) return;
     const a = b.dataset.act, row = +b.dataset.row;
+    if (a === "pool") { cover.pool = b.dataset.pool; draw(); return; }
+    if (a === "hless") { cover.h = Math.max(1, cover.h - 0.5); draw(); return; }
+    if (a === "hmore") { cover.h = Math.min(10, cover.h + 0.5); draw(); return; }
+    if (a === "spend") { addSpend(); return; }
+    if (a === "paid") { if (B().get().data) { tap(); markPaid(row); } return; }
     if (a === "connect") { B().connect(); return; }
     if (a === "reload") { B().load(); return; }
     if (a === "jump-confirm") { $("moConfirm")?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }

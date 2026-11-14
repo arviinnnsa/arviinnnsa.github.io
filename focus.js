@@ -127,6 +127,12 @@ Errands
     return null;
   }
 
+  /* plans sent from the ARVIN Brain sheet: only fills days that have no plan yet */
+  window.apFocus = {
+    has: d => !!bag()[d],
+    put: (d, text) => { const r = parse(text, {}); if (r.error) return r.error; bag()[d] = r.plan; prune(); save(); buildAll(); return null; }
+  };
+
   const getTask = id => (today()?.tasks || []).find(t => t.id === id) || null;
   const errFrac = () => { const e = today()?.errands || []; return e.length ? e.filter(x => x.done).length / e.length : 0; };
 

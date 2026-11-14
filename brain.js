@@ -52,7 +52,8 @@
   }
 
   const RANGES = ["Settings!A1:C30", "Pay!A1:L40", "Shifts!A1:L400", "Tutoring!A1:G300", "Stocks!A1:K8",
-    "Prices!A1:D2000", "News!A1:F400", "Trades!A1:H300"];
+    "Prices!A1:D2000", "News!A1:F400", "Trades!A1:H300",
+    "Courses!A1:I10", "Grades!A1:F100", "List!A1:G600", "Focus!A1:C80", "Spending!A1:E1500"];
 
   async function load() {
     if (!token()) { state = { ...state, status: state.data ? "cached" : "signedout", error: { code: "auth" } }; emit(); return state; }
@@ -78,7 +79,12 @@
         portfolio: +sumRow("Total value (CAD)") || 0,
         prices: toRows(out.Prices).map(r => ({ ...r, Date: fromSerial(r.Date) })),
         news: toRows(out.News).map(r => ({ ...r, Date: fromSerial(r.Date) })),
-        trades: toRows(out.Trades).map(r => ({ ...r, Date: fromSerial(r.Date) }))
+        trades: toRows(out.Trades).map(r => ({ ...r, Date: fromSerial(r.Date) })),
+        courses: toRows(out.Courses).filter(r => r.Code),
+        grades: toRows(out.Grades).filter(r => r.Course).map(r => ({ ...r, Date: fromSerial(r.Date) })),
+        list: toRows(out.List).map(r => ({ ...r, Added: fromSerial(r.Added), "Planned day": fromSerial(r["Planned day"]) })),
+        focus: toRows(out.Focus).map(r => ({ ...r, Date: fromSerial(r.Date) })),
+        spending: toRows(out.Spending).map(r => ({ ...r, Date: fromSerial(r.Date) }))
       };
       state = { status: "ready", error: null, data, at: Date.now() };
       try { localStorage.setItem(CACHE, JSON.stringify({ data, at: state.at })); } catch (e) {}
@@ -94,6 +100,9 @@
   }
   async function append(range, values) {
     return call(`/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`, { method: "POST", body: JSON.stringify({ values }) });
+  }
+  async function clear(range) {
+    return call(`/values/${encodeURIComponent(range)}:clear`, { method: "POST", body: "{}" });
   }
   async function log(action, tab, detail) {
     const d = new Date();
@@ -115,7 +124,7 @@
   }
 
   window.apBrain = {
-    get: () => state, load, write, append, log, connect, fromSerial,
+    get: () => state, load, write, append, log, connect, fromSerial, clear,
     url: () => "https://docs.google.com/spreadsheets/d/" + id() + "/edit",
     on: f => { subs.add(f); return () => subs.delete(f); }
   };
