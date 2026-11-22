@@ -296,7 +296,7 @@ Errands
     if (!box) return;
     document.body.insertAdjacentHTML("beforeend", OVERLAYS);
     box.innerHTML = `
-      <div class="fo-head"><div><h2>Focus</h2><p>Three big things today, and a few quick ones.</p></div>
+      <div class="fo-head"><div><h2>To do list</h2><p>Three big things today, and a few quick ones.</p></div>
         <div class="fo-count"><b id="foTot"></b><span>parts done</span></div></div>
       <div class="fo-cards" id="foCards"></div>
       <div id="foEmpty"></div>
