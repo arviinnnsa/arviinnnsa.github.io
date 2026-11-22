@@ -4690,7 +4690,7 @@ async function moveEvent(e,k,s,en){
 /* ---------- tabs (iPhone) and swipe ---------- */
 /* Hidden tabs: code and data stay; remove a name here to bring a tab back. */
 const HIDDEN_TABS=["money","todo"];
-(()=>{const st=document.createElement("style");st.textContent=HIDDEN_TABS.map(t=>`.topnav [data-t="${t}"],#tabbar [data-t="${t}"]{display:none!important}`).join("");document.head.append(st)})();
+(()=>{const st=document.createElement("style");st.textContent=HIDDEN_TABS.map(t=>`.topnav [data-t="${t}"],#tabbar [data-t="${t}"]{display:none!important}`).join("")+"#tabbar button{white-space:nowrap}";document.head.append(st)})();
 let TAB=(()=>{try{const t=localStorage.getItem("ap-tab");return ["today","focus","money","week","school","exams","todo"].includes(t)?t:"today"}catch(e){return "today"}})();
 function goTab(t){if(t==="habits")t="todo";if(HIDDEN_TABS.includes(t))t="today";TAB=t;applyTab(true);scrollTo({top:0,behavior:"auto"});if(t==="week")setTimeout(()=>{try{render()}catch(e){}},30)}window.goTab=goTab;window.apSync=async()=>{try{if(SITE)await siteSync();else await nativeSync()}catch(e){}try{render()}catch(e){}};
 function applyTab(anim){if(HIDDEN_TABS.includes(TAB))TAB="today";const nw=narrow();
