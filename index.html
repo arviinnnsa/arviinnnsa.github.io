@@ -1337,7 +1337,6 @@ body{letter-spacing:-.011em}
   <section aria-labelledby="scTitle" id="school" data-tab="school">
     <div class="sc-aura" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="sc-head"><div class="sc-giant" aria-hidden="true">School</div><h2 id="scTitle">School.</h2><p>FMGT, ECON and POLI in one place: what's next, how ready you are, and what to study today.</p></div>
-    <div id="scBox"><div class="sc-shimmer"></div></div>
   </section>
 
   <section aria-labelledby="cTitle" data-tab="school">
@@ -1348,6 +1347,11 @@ body{letter-spacing:-.011em}
     <div class="rowlbl">Work and life</div>
     <div class="rail rail2" id="rail2"></div>
   </section>
+
+  <section data-tab="school" id="schoolMore">
+    <div id="scBox"><div class="sc-shimmer"></div></div>
+  </section>
+
 
   <section aria-labelledby="dTitle" id="exams" data-tab="exams">
     <div class="shead"><div><h2 id="dTitle">Due dates.</h2><p>Counted down in days, soonest first.</p></div></div>
@@ -4690,7 +4694,7 @@ async function moveEvent(e,k,s,en){
 /* ---------- tabs (iPhone) and swipe ---------- */
 /* Hidden tabs: code and data stay; remove a name here to bring a tab back. */
 const HIDDEN_TABS=["money","todo"];
-(()=>{const st=document.createElement("style");st.textContent=HIDDEN_TABS.map(t=>`.topnav [data-t="${t}"],#tabbar [data-t="${t}"]{display:none!important}`).join("")+"#tabbar button{white-space:nowrap}";document.head.append(st)})();
+(()=>{const st=document.createElement("style");st.textContent=".sc-stats,#xfer{display:none!important}"+HIDDEN_TABS.map(t=>`.topnav [data-t="${t}"],#tabbar [data-t="${t}"]{display:none!important}`).join("")+"#tabbar button{white-space:nowrap}";document.head.append(st)})();
 let TAB=(()=>{try{const t=localStorage.getItem("ap-tab");return ["today","focus","money","week","school","exams","todo"].includes(t)?t:"today"}catch(e){return "today"}})();
 function goTab(t){if(t==="habits")t="todo";if(HIDDEN_TABS.includes(t))t="today";TAB=t;applyTab(true);scrollTo({top:0,behavior:"auto"});if(t==="week")setTimeout(()=>{try{render()}catch(e){}},30)}window.goTab=goTab;window.apSync=async()=>{try{if(SITE)await siteSync();else await nativeSync()}catch(e){}try{render()}catch(e){}};
 function applyTab(anim){if(HIDDEN_TABS.includes(TAB))TAB="today";const nw=narrow();
@@ -5303,7 +5307,7 @@ function render(){const box=document.getElementById("scBox");if(!box||!window.ST
   box.textContent="";
   // widgets
   const nx=ups[0],bnLeft=diffDays(k,BN.due),due=dueList().length;
-  const wg=h("div",{class:"sc-grid",style:"grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"});
+  const wg=h("div",{class:"sc-grid sc-stats",style:"grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"});
   const wcard=(lbl,v,sub,on)=>h("button",{class:"sc-card lg press",style:"text-align:left;cursor:pointer;font:inherit;color:var(--lg-ink);border-radius:24px;padding:14px;display:block;width:100%;min-width:0",onclick:on},h("div",{class:"sc-lbl",style:"font-size:10px"},lbl),h("div",{style:"margin:8px 0 2px"},num(v,"sc-big",40)),h("div",{class:"sc-mute",style:"font-size:12px"},sub));
   const wkMin=[0,1,2,3,4,5,6].reduce((a,i)=>{const f=S().focus[addDays(k,-i)]||{};return a+Object.values(f).reduce((x,y)=>x+y,0)},0);
   const w1=wcard("This week",wkMin,"min studied",()=>pickFocus());
@@ -5835,12 +5839,12 @@ h3{letter-spacing:-.01em}
   background:radial-gradient(60% 120% at 15% 0%,rgba(59,76,255,.55),transparent 70%),radial-gradient(50% 120% at 90% 30%,rgba(138,59,255,.45),transparent 70%),radial-gradient(60% 100% at 50% 120%,rgba(0,194,168,.35),transparent 70%),#000}
 #school>.sc-head h2{color:#f5f5f7}
 #school>.sc-head p{color:#a1a1a6!important}
-#school .sc-giant{color:#fff;opacity:.07}
-#school .sc-card.lg::before{display:none}
-#school .sc-card.lg{backdrop-filter:none;-webkit-backdrop-filter:none}
-#school .sc-btn:not(.ghost){background:var(--kn-blue);color:#fff}
-#school .sc-chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-#school .sc-rad>.lg{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--lg-solid)}
+:is(#school,#schoolMore) .sc-giant{color:#fff;opacity:.07}
+:is(#school,#schoolMore) .sc-card.lg::before{display:none}
+:is(#school,#schoolMore) .sc-card.lg{backdrop-filter:none;-webkit-backdrop-filter:none}
+:is(#school,#schoolMore) .sc-btn:not(.ghost){background:var(--kn-blue);color:#fff}
+:is(#school,#schoolMore) .sc-chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+:is(#school,#schoolMore) .sc-rad>.lg{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--lg-solid)}
 .sc-sheet{background:var(--lg-fill-2)}
 
 /* floating tab bar stays glass */
@@ -6103,7 +6107,7 @@ main.page{position:relative;z-index:0}
 }
 
 /* buttons */
-.bt.primary,.intro .bt.primary,#school .sc-btn:not(.ghost),.mv button.p{background:var(--ag-accent)!important;border-color:var(--ag-accent)!important;color:var(--ag-on-accent)!important}
+.bt.primary,.intro .bt.primary,:is(#school,#schoolMore) .sc-btn:not(.ghost),.mv button.p{background:var(--ag-accent)!important;border-color:var(--ag-accent)!important;color:var(--ag-on-accent)!important}
 .bt.secondary:not(.intro .bt):not(.shead .bt){background:var(--ag-glass)!important;border:1px solid var(--ag-edge)!important;color:var(--ag-ink)!important;-webkit-backdrop-filter:var(--ag-blur);backdrop-filter:var(--ag-blur);box-shadow:var(--ag-sh-glass)}
 .bt,.sc-btn,.sc-chip,.icon,.arrow,.kinds button,.tabbar button,.strip button,.dh{transition:transform .35s var(--ag-spring),background-color .2s,color .2s!important}
 .bt:active,.sc-btn:active,.sc-chip:active,.icon:active,.arrow:active,.kinds button:active,.tabbar button:active,.strip button:active,.dh:active{transform:scale(.94)!important}
@@ -6112,7 +6116,7 @@ main.page{position:relative;z-index:0}
 /* heroes: black with Arvin glow (no blue-purple) */
 #school>.sc-head::after{background:radial-gradient(40% 140% at 18% 0%,color-mix(in srgb,var(--ag-blue) 70%,transparent),transparent 70%),radial-gradient(35% 140% at 85% 30%,color-mix(in srgb,var(--ag-teal) 55%,transparent),transparent 70%),radial-gradient(45% 120% at 50% 130%,color-mix(in srgb,var(--ag-coral) 45%,transparent),transparent 70%),#000!important}
 #schedule>.shead::after{background:radial-gradient(45% 140% at 85% 0%,color-mix(in srgb,var(--ag-blue) 45%,transparent),transparent 70%),radial-gradient(35% 120% at 10% 110%,color-mix(in srgb,var(--ag-teal) 35%,transparent),transparent 70%),#000!important}
-#schedule>.shead::before,#todo>.shead::before,#tutoring>.shead::before,#work>.shead::before,#school .sc-giant{font-weight:800!important;letter-spacing:-.05em!important;opacity:.07!important}
+#schedule>.shead::before,#todo>.shead::before,#tutoring>.shead::before,#work>.shead::before,:is(#school,#schoolMore) .sc-giant{font-weight:800!important;letter-spacing:-.05em!important;opacity:.07!important}
 
 /* ===== Schedule, redesigned ===== */
 #schedule .tabs,.kn-appear,.ag-seg{position:relative;display:inline-grid!important;grid-auto-flow:column;grid-auto-columns:1fr;gap:0!important;padding:4px!important;border-radius:999px!important;background:var(--ag-hair)!important;border:0!important;isolation:isolate}
@@ -6305,7 +6309,7 @@ main.page .shead .bt.secondary,#work .shead .bt,#today .shead .bt,.shead .bt.sec
   background:var(--m-card)!important;border:1px solid var(--m-hair)!important;box-shadow:var(--m-shadow)!important;border-radius:var(--m-r)!important}
 .sc-card,.card,.fcard{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 @media (hover:hover){.card:hover,.fcard:hover,.sc-card:hover{transform:none!important;box-shadow:var(--m-shadow)!important}}
-.bt.primary,.intro .bt.primary,#school .sc-btn:not(.ghost),.mv button.p{background:var(--m-accent)!important;border-color:var(--m-accent)!important;color:#fff!important}
+.bt.primary,.intro .bt.primary,:is(#school,#schoolMore) .sc-btn:not(.ghost),.mv button.p{background:var(--m-accent)!important;border-color:var(--m-accent)!important;color:#fff!important}
 
 /* ---- 3. header + tab bar ---- */
 .bar{background:color-mix(in srgb,var(--m-bg) 78%,transparent)!important;border-bottom:1px solid var(--m-hair)!important}
@@ -6386,9 +6390,9 @@ html[data-ap-tab="today"] .mv{order:9}
 #qaddWrap{margin:0!important}
 
 /* ---- 5. School ---- */
-#school .sc-head{padding:0!important}
-#school .sc-head h2,#school .sc-head p{color:var(--m-ink)!important}
-#school .sc-head p{color:var(--m-mute)!important}
+:is(#school,#schoolMore) .sc-head{padding:0!important}
+:is(#school,#schoolMore) .sc-head h2,:is(#school,#schoolMore) .sc-head p{color:var(--m-ink)!important}
+:is(#school,#schoolMore) .sc-head p{color:var(--m-mute)!important}
 section[aria-labelledby="cTitle"] .rowlbl,#rail2{display:none!important}
 section[aria-labelledby="cTitle"] .rowlbl:first-of-type{display:none!important}
 
