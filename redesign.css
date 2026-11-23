@@ -1,0 +1,118 @@
+/* ================= ARVIN redesign layer (preview) ================= */
+
+/* ---------- 1 · Today: full-screen scene ---------- */
+body.rd .tdtop{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important;grid-template-columns:none!important;padding:0!important;margin:0!important}
+body.rd .tdtop>.td-r{order:-1}
+body.rd .tdtop{background:none!important;border-radius:0!important;min-height:0!important;height:auto!important;overflow:visible!important}
+body.rd .tdtop>.td-l,body.rd .tdtop>.td-r{position:static!important;width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;padding:0!important;margin:0!important;background:none!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important;border:0!important}
+body.rd .hstage{padding:0!important;position:relative!important;inset:auto!important;width:100%!important;height:auto!important}
+body.rd .hstage>.hero{position:relative!important;inset:auto!important;top:auto!important;width:100vw!important;max-width:none!important;margin:0 0 0 calc(50% - 50vw)!important;height:100svh!important;min-height:560px!important;max-height:980px;border-radius:0 0 34px 34px!important;box-shadow:none!important;display:block!important}
+body.rd .hero>:not(canvas):not(#hero):not(#rdBar),body.rd .hstage>:not(.hero),body.rd .t2-wx,body.rd #hcap,body.rd .hero .hwx,body.rd [class*="wxchip"]{display:none!important}
+body.rd .hero #hero,body.rd .hero #hero>div{background:none!important;box-shadow:none!important;border:0!important}
+body.rd .hero #hero :is(p,span,div){color:#fff}
+body.rd .hero #hero{position:absolute!important;z-index:3;left:0;right:0;top:calc(var(--rdhdr,64px) + clamp(48px,11vh,140px));padding:0 24px!important;margin:0!important;color:#fff;text-align:center;display:block!important}
+body.rd .hero #hero .greet{color:rgba(255,255,255,.92)!important;font-size:15px!important;font-weight:600!important;letter-spacing:0!important;text-transform:none!important;margin:0 0 12px!important}
+body.rd .hero #hero h1{color:#fff!important;font-weight:700!important;letter-spacing:-.05em!important;font-size:clamp(46px,12vw,104px)!important;line-height:.98!important;max-width:12ch;margin:0 auto!important;text-shadow:0 2px 40px rgba(0,0,0,.22)}
+body.rd .hero #hero .cdp{display:inline-flex;margin-top:16px;color:#fff!important;background:rgba(255,255,255,.18)!important;border:1px solid rgba(255,255,255,.35)!important;backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5);border-radius:999px!important;padding:7px 14px!important;font-size:13.5px!important;font-weight:500!important;letter-spacing:0!important;text-transform:none!important}
+body.rd .hero #hero .cdp i{background:#fff!important}
+body.rd .hero #hero .cta{justify-content:center;margin-top:22px!important;width:auto!important}
+body.rd .hero #hero .cta .bt{flex:0 0 auto!important;border-radius:999px!important;text-transform:none!important;letter-spacing:0!important;font-size:15px!important;font-weight:600!important;padding:12px 22px!important}
+body.rd .hero #hero .cta .bt.primary{background:#0071e3!important;color:#fff!important;border-color:#0071e3!important}
+body.rd .hero #hero .cta .bt.secondary{background:transparent!important;color:#fff!important;border:1px solid rgba(255,255,255,.45)!important}
+
+/* the bar: thin numbers straight on the picture, fading as you scroll */
+.rdbar{position:absolute;z-index:3;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 104px);display:flex;padding:0 26px;color:#fff;pointer-events:none;will-change:opacity,transform;text-shadow:0 1px 18px rgba(0,0,0,.28)}
+.rdbar>div{flex:1 1 0;min-width:0;padding:0 14px}
+.rdbar>div:first-child{padding-left:0}
+.rdbar>div+div{border-left:1px solid rgba(255,255,255,.38)}
+.rdbar b{display:block;font-weight:200;font-size:clamp(34px,8.6vw,64px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rdbar span{display:block;font-size:12.5px;font-weight:500;opacity:.88;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:900px){.rdbar{bottom:56px;padding:0 max(40px,6vw);max-width:1100px;margin:0 auto}}
+
+/* header turns clear while it sits on the picture */
+body.rd.rd-over #bar{background:transparent!important;border-color:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;color:#fff!important}
+body.rd.rd-over #bar :is(a,button,span,b,svg,.wm,.brand){color:#fff!important}
+body.rd.rd-over #bar .topnav button{color:rgba(255,255,255,.85)!important;background:transparent!important;border-color:transparent!important}
+body.rd.rd-over #bar .topnav button[aria-current],body.rd.rd-over #bar .topnav button.on,body.rd.rd-over #bar .topnav button[aria-pressed=true]{background:#fff!important;color:#000!important}
+
+/* ---------- 5B · numbers: thin, hairlines, no boxes ---------- */
+body.rd .figbar:not(.off){margin:28px 0 8px!important;border:1px solid var(--line-soft,rgba(0,0,0,.08))!important;border-radius:28px!important;background:var(--surface,#fff)!important;padding:4px 6px!important;display:flex!important}
+body.rd .figbar .fig{flex:1 1 0;text-align:left!important;padding:18px 16px!important;margin:0!important;border-right:0!important}
+body.rd .figbar .fig+.fig{border-left:1px solid var(--line-soft,rgba(0,0,0,.08))!important}
+body.rd .figbar .fig b{font-weight:200!important;font-size:clamp(36px,9vw,52px)!important;letter-spacing:-.04em!important}
+body.rd .figbar .fig b small{font-size:.38em!important;color:var(--muted)!important;margin-left:2px}
+body.rd .figbar .fig span{font-size:12px!important;font-weight:400!important;letter-spacing:0!important;text-transform:none!important;color:var(--muted)!important;margin-top:6px!important}
+body.rd .figbar .mbars{display:none!important}
+
+/* ---------- 2 · School: swipe cards ---------- */
+body.rd .sc-aura,body.rd .sc-giant{display:none!important}
+body.rd .rail{display:flex!important;grid-template-columns:none!important;gap:14px!important;overflow-x:auto!important;scroll-snap-type:x mandatory;padding:4px max(16px,4vw) 4px!important;margin-inline:calc(-1 * max(16px,4vw))!important;scrollbar-width:none;scroll-padding-left:max(16px,4vw)}
+body.rd .rail::-webkit-scrollbar{display:none}
+body.rd .rail .tile{flex:none!important;width:min(80vw,360px)!important;max-width:none!important;scroll-snap-align:start;grid-column:auto!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+body.rd .rail .tile .art{position:relative!important;height:min(104vw,460px)!important;aspect-ratio:auto!important;border-radius:30px!important;overflow:hidden!important;margin:0!important;transition:transform .25s ease}
+body.rd .rail .tile:active .art{transform:scale(.98)}
+body.rd .rail .tile .art canvas{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+body.rd .rail .tile .art>:not(canvas):not(.rdg):not(.rdpill){display:none!important}
+body.rd .rail .tile>:not(.art){display:none!important}
+.rdg{position:absolute;left:14px;bottom:-.13em;font-weight:700;letter-spacing:-.065em;line-height:.8;font-size:clamp(92px,27vw,132px);color:rgba(255,255,255,.93);pointer-events:none;white-space:nowrap}
+.rdpill{position:absolute;top:16px;left:16px;font-size:12.5px;font-weight:500;color:#fff;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.36);backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5)}
+body.rd .rail2 .tile{width:min(58vw,250px)!important}
+body.rd .rail2 .tile .art{height:min(70vw,300px)!important;border-radius:26px!important}
+body.rd .rail2 .rdg{font-size:clamp(64px,17vw,84px)}
+.rddots{display:flex;gap:6px;justify-content:center;margin:14px 0 4px;min-height:6px}
+.rddots i{width:6px;height:6px;border-radius:3px;background:var(--line,rgba(0,0,0,.18));transition:width .25s ease,background .25s ease}
+.rddots i.on{width:18px;background:var(--ink,#1d1d1f)}
+.rdstats{max-width:520px;margin:6px auto 18px}
+.rdname{text-align:center;font-size:15px;font-weight:600;margin-bottom:10px}
+.rdrow{display:flex}
+.rdrow>div{flex:1;text-align:center;padding:0 6px}
+.rdrow>div+div{border-left:1px solid var(--line-soft,rgba(0,0,0,.09))}
+.rdrow b{display:block;font-weight:200;font-size:30px;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+.rdrow span{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+body.rd .arrows{display:none!important}
+
+/* ---------- 3 · Schedule ---------- */
+body.rd #schedule .tabs{background:var(--surface-2,rgba(0,0,0,.05))!important;border-radius:999px!important;padding:3px!important;border:0!important}
+body.rd #schedule .tabs button{border-radius:999px!important;font-size:13.5px!important;padding:7px 16px!important}
+body.rd #cal .strip{display:flex!important;justify-content:space-between;gap:4px;margin:4px 0 14px!important;padding:0!important;border:0!important;background:none!important}
+body.rd #cal .strip button{flex:1;display:flex!important;flex-direction:column;align-items:center;gap:2px;padding:6px 0 8px!important;border-radius:18px!important;background:none!important;border:0!important}
+body.rd #cal .strip .dn{font-size:11.5px!important;color:var(--muted)!important;text-transform:none!important;letter-spacing:0!important;font-weight:500!important}
+body.rd #cal .strip .dd{font-weight:200!important;font-size:26px!important;letter-spacing:-.02em;line-height:1.1}
+body.rd #cal .strip button.sel{background:var(--ink,#000)!important;color:var(--panel,#fff)!important}
+body.rd #cal .strip button.sel .dn{color:inherit!important;opacity:.7}
+body.rd #cal .strip .dots i{width:4px!important;height:4px!important}
+@media (min-width:700px){body.rd #cal .dayhead .dd{font-weight:200!important;font-size:24px!important}}
+body.rd #cal .ev.rdph{overflow:hidden!important;border:0!important;border-radius:14px!important;background:#5b6b7c!important;color:#fff!important;box-shadow:none!important;padding:7px 10px!important}
+body.rd #cal .ev.rdph::before,body.rd #cal .ev.rdph .dot{display:none!important}
+body.rd #cal .ev.rdph .rdart{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+body.rd #cal .ev.rdph>:not(.rdart){position:relative;z-index:1;color:#fff!important;text-shadow:0 1px 10px rgba(0,0,0,.45)}
+body.rd #cal .ev.rdph .et{font-weight:650!important}
+body.rd #cal .ev.rdph.pastev{opacity:.55}
+body.rd #cal .ev.rdph .has-note,body.rd #cal .ev.rdph .wmark{background:rgba(255,255,255,.22)!important;border:0!important;color:#fff!important;backdrop-filter:blur(8px)}
+
+/* ---------- 4B · Due dates: giant thin day counts ---------- */
+.rdduehd{margin:4px 0 6px}
+.rdeye{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:999px;border:1px solid var(--line-soft,rgba(0,0,0,.1));background:var(--surface,#fff)}
+.rdeye i{width:6px;height:6px;border-radius:50%;background:#0071e3}
+body.rd #dgrid{display:block!important;grid-template-columns:none!important;max-width:760px}
+.rddue{list-style:none;margin:6px 0 0;padding:0}
+.rdd{display:grid;grid-template-columns:92px minmax(0,1fr) auto;align-items:center;gap:0 12px;padding:16px 0;border-bottom:1px solid var(--line-soft,rgba(0,0,0,.08))}
+.rdd:last-child{border-bottom:0}
+.rdd button{all:unset;cursor:pointer;min-width:0}
+.rdn b{display:block;font-weight:200;font-size:58px;letter-spacing:-.045em;line-height:.92;font-variant-numeric:tabular-nums}
+.rdn span{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.rdt b{display:block;font-weight:600;font-size:16.5px;line-height:1.3;overflow-wrap:anywhere}
+.rdt span{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);margin-top:4px}
+.rdt span i{width:7px;height:7px;border-radius:50%;flex:none}
+.rdd.exam .rdt b::after{content:"Exam";margin-left:8px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,#e5484d 12%,transparent);color:#e5484d;vertical-align:2px}
+.rdd.done .rdn,.rdd.done .rdt{opacity:.4}
+.rdd.done .rdt b{text-decoration:line-through}
+.rdck{all:unset;cursor:pointer;width:30px;height:30px;border-radius:50%;border:2px solid var(--faint,#9A9CA0);display:grid;place-items:center;transition:background .2s,border-color .2s}
+.rdck svg{width:13px;height:13px;fill:none;stroke:transparent;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.rdck.on{background:#30a46c;border-color:#30a46c}.rdck.on svg{stroke:#fff}
+.rdempty{color:var(--muted);font-size:15px;padding:18px 0}
+
+@media (prefers-reduced-motion:reduce){.rdbar,.rddots i,body.rd .rail .tile .art{transition:none!important}}
+@media (max-width:699px){body.rd #cal .dayhead .dh{display:flex!important;flex-direction:column!important;align-items:center!important;gap:0!important;padding:4px 0!important;min-width:0}
+body.rd #cal .dayhead .dn{font-size:10px!important;letter-spacing:0!important;line-height:1.2}
+body.rd #cal .dayhead .dd{font-size:16px!important;font-weight:300!important;line-height:1.2}}

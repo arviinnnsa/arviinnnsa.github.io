@@ -318,6 +318,7 @@ ul.fml li{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.82em;bac
 <link rel="stylesheet" href="focus.css">
 <link rel="stylesheet" href="projects.css">
 <link rel="stylesheet" href="tasks.css"><link rel="stylesheet" href="everything.css"><link rel="stylesheet" href="money.css">
+<link rel="stylesheet" href="redesign.css">
 </head><body>
 <style id="arvin-launch-css">
 /* start-up screen, inspired by the iPhone boot screen */
@@ -5399,6 +5400,14 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!sheetEl)
 })();
 
 
+/* ---- redesign bridge (preview) ---- */
+try{addEventListener('pointerdown',()=>{window.__ut=Date.now()},true);addEventListener('keydown',()=>{window.__ut=Date.now()},true);const _ow=openWeekPlan;openWeekPlan=function(){if(!(Date.now()-(window.__ut||0)<2000))return;return _ow.apply(this,arguments)}}catch(e){}
+{const g=f=>{try{return f()}catch(e){return null}};window.AP={get EV(){return EV},get ST(){return ST},get S(){return S},get TAB(){return TAB},heroPick:g(()=>heroPick),minOf:g(()=>minOf),t12:g(()=>t12),relDay:g(()=>relDay),leaveInfo:g(()=>leaveInfo),classify:g(()=>classify),isDone:g(()=>isDone),isAhead:g(()=>isAhead),diffDays:g(()=>diffDays),wxText:g(()=>wxText),condAt:g(()=>condAt),COURSE:g(()=>COURSE),DUE:g(()=>DUE),DOW:g(()=>DOW),dateOf:g(()=>dateOf),weekStart:g(()=>weekStart),eventsOn:g(()=>eventsOn),addDays:g(()=>addDays),nowParts:g(()=>nowParts),days:g(()=>days),layout:g(()=>layout),sceneFor:g(()=>sceneFor),railLive:g(()=>railLive),clean:g(()=>clean),COURSE_NAMES:g(()=>COURSE_NAMES),canDone:g(()=>canDone),toggleDone:g(()=>toggleDone),openEvent:g(()=>openEvent),render:g(()=>render)};
+{const _o=renderHero;renderHero=function(){const r=_o.apply(this,arguments);try{const h=window.__rd&&window.__rd.renderHero;if(h)h()}catch(e){}return r};}
+{const _o=renderRail;renderRail=function(){const r=_o.apply(this,arguments);try{const h=window.__rd&&window.__rd.renderRail;if(h)h()}catch(e){}return r};}
+{const _o=renderGrid;renderGrid=function(){const r=_o.apply(this,arguments);try{const h=window.__rd&&window.__rd.renderGrid;if(h)h()}catch(e){}return r};}
+{const _o=renderDeadlines;renderDeadlines=function(){const r=_o.apply(this,arguments);try{const h=window.__rd&&window.__rd.renderDeadlines;if(h)h()}catch(e){}return r};}
+}
 })();
 </script>
 
@@ -6690,6 +6699,7 @@ html[data-ap-tab="today"] main.page>#banner,html[data-ap-tab="today"] main.page>
 <script src="projects.js"></script>
 <script src="tasks.js"></script>
 <script src="everything.js"></script>
+<script src="redesign.js"></script>
 <script src="brain.js"></script>
 <script src="money.js"></script>
 <script src="sync.js"></script>
