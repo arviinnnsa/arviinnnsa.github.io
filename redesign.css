@@ -7,7 +7,7 @@ body.rd .tdtop{background:none!important;border-radius:0!important;min-height:0!
 body.rd .tdtop>.td-l,body.rd .tdtop>.td-r{position:static!important;width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;padding:0!important;margin:0!important;background:none!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important;border:0!important}
 body.rd .hstage{padding:0!important;position:relative!important;inset:auto!important;width:100%!important;height:auto!important}
 body.rd .hstage>.hero{position:relative!important;inset:auto!important;top:auto!important;width:100vw!important;max-width:none!important;margin:0 0 0 calc(50% - 50vw)!important;height:100svh!important;min-height:560px!important;max-height:980px;border-radius:0 0 34px 34px!important;box-shadow:none!important;display:block!important}
-body.rd .hero>:not(canvas):not(#hero):not(#rdBar),body.rd .hstage>:not(.hero),body.rd .t2-wx,body.rd #hcap,body.rd .hero .hwx,body.rd [class*="wxchip"]{display:none!important}
+body.rd .hero>:not(canvas):not(#hero):not(#rdBar):not(svg.scene),body.rd .hstage>:not(.hero),body.rd .t2-wx,body.rd #hcap,body.rd .hero .hwx,body.rd [class*="wxchip"]{display:none!important}
 body.rd .hero #hero,body.rd .hero #hero>div{background:none!important;box-shadow:none!important;border:0!important}
 body.rd .hero #hero :is(p,span,div){color:#fff}
 body.rd .hero #hero{position:absolute!important;z-index:3;left:0;right:0;top:calc(var(--rdhdr,64px) + clamp(48px,11vh,140px));padding:0 24px!important;margin:0!important;color:#fff;text-align:center;display:block!important}
@@ -33,7 +33,7 @@ body.rd .hero #hero .cta .bt.secondary{background:transparent!important;color:#f
 body.rd.rd-over #bar{background:transparent!important;border-color:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;color:#fff!important}
 body.rd.rd-over #bar :is(a,button,span,b,svg,.wm,.brand){color:#fff!important}
 body.rd.rd-over #bar .topnav button{color:rgba(255,255,255,.85)!important;background:transparent!important;border-color:transparent!important}
-body.rd.rd-over #bar .topnav button[aria-current],body.rd.rd-over #bar .topnav button.on,body.rd.rd-over #bar .topnav button[aria-pressed=true]{background:#fff!important;color:#000!important}
+body.rd.rd-over #bar .topnav button[aria-current=true],body.rd.rd-over #bar .topnav button.on,body.rd.rd-over #bar .topnav button[aria-pressed=true]{background:#fff!important;color:#000!important}
 
 /* ---------- 5B · numbers: thin, hairlines, no boxes ---------- */
 body.rd .figbar:not(.off){margin:28px 0 8px!important;border:1px solid var(--line-soft,rgba(0,0,0,.08))!important;border-radius:28px!important;background:var(--surface,#fff)!important;padding:4px 6px!important;display:flex!important}
@@ -52,7 +52,7 @@ body.rd .rail .tile{flex:none!important;width:min(80vw,360px)!important;max-widt
 body.rd .rail .tile .art{position:relative!important;height:min(104vw,460px)!important;aspect-ratio:auto!important;border-radius:30px!important;overflow:hidden!important;margin:0!important;transition:transform .25s ease}
 body.rd .rail .tile:active .art{transform:scale(.98)}
 body.rd .rail .tile .art canvas{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
-body.rd .rail .tile .art>:not(canvas):not(.rdg):not(.rdpill){display:none!important}
+body.rd .rail .tile .art>:not(canvas):not(.rdg):not(.rdpill):not(svg.scene){display:none!important}
 body.rd .rail .tile>:not(.art){display:none!important}
 .rdg{position:absolute;left:14px;bottom:-.13em;font-weight:700;letter-spacing:-.065em;line-height:.8;font-size:clamp(92px,27vw,132px);color:rgba(255,255,255,.93);pointer-events:none;white-space:nowrap}
 .rdpill{position:absolute;top:16px;left:16px;font-size:12.5px;font-weight:500;color:#fff;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.36);backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5)}
@@ -116,3 +116,74 @@ body.rd #dgrid{display:block!important;grid-template-columns:none!important;max-
 @media (max-width:699px){body.rd #cal .dayhead .dh{display:flex!important;flex-direction:column!important;align-items:center!important;gap:0!important;padding:4px 0!important;min-width:0}
 body.rd #cal .dayhead .dn{font-size:10px!important;letter-spacing:0!important;line-height:1.2}
 body.rd #cal .dayhead .dd{font-size:16px!important;font-weight:300!important;line-height:1.2}}
+
+/* ---------- art finish: one soft grade on every scene ---------- */
+body.rd.grade :is(.hero,.rail .tile .art,#cal .ev.rdph){isolation:isolate}
+body.rd.grade :is(.hero canvas,.rail .tile .art canvas,#cal .ev.rdph .rdart){filter:saturate(.78) contrast(.9) brightness(1.07) sepia(.08)}
+body.rd.grade :is(.hero,.rail .tile .art,#cal .ev.rdph)::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(120% 70% at 70% 8%,rgba(255,226,190,.42),transparent 60%),linear-gradient(to bottom,transparent 45%,rgba(255,240,225,.16) 75%,transparent);mix-blend-mode:soft-light}
+body.rd.grade :is(.hero,.rail .tile .art,#cal .ev.rdph)::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.22;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+body.rd.grade .rail .tile .art :is(.rdg,.rdpill){z-index:2}
+body.rd.grade .hero :is(#hero,#rdBar){z-index:3}
+
+/* ================= live scenes ================= */
+svg.scene{--sx:1;--sy:1;--so:.22;--co:.3;--wr:0deg;--wl:1;--wo:.12;--tint:#fff;--to:0;--gl:#ffe2b0;--go:.22;--lp:0;--fg:0;--cl:0;--rn:0;--sn:0;--stm:.3}
+svg.scene :is(.shs,.shc,.win,.tint,.glow,.lamp,.fog,.clouds,.rain,.snow){transition:transform 1.4s ease,opacity 1.4s ease,fill 1.4s ease}
+svg.scene .shs{transform:translate(calc(var(--sx)*22px),calc(var(--sy)*26px));opacity:var(--so)}
+svg.scene .shc{transform:translate(calc(var(--sx)*3px),calc(var(--sy)*4px));opacity:var(--co)}
+svg.scene .win{transform-origin:300px -100px;transform:rotate(var(--wr)) scaleY(var(--wl));opacity:var(--wo)}
+svg.scene .sway{transform-origin:300px 0;animation:rdsway 9s ease-in-out infinite alternate}
+@keyframes rdsway{to{transform:translateX(7px) rotate(.5deg)}}
+svg.scene .leafsh{transform-origin:540px 0;animation:rdleaf 3.6s ease-in-out infinite alternate}
+@keyframes rdleaf{to{transform:rotate(4deg) translateX(4px)}}
+svg.scene .tint{fill:var(--tint);opacity:var(--to);mix-blend-mode:multiply}
+svg.scene .glow{fill:var(--gl);opacity:var(--go)}
+svg.scene .lamp{opacity:var(--lp);mix-blend-mode:screen}
+svg.scene .fog{opacity:var(--fg)}
+svg.scene .clouds{opacity:var(--cl)}
+svg.scene .cl1{animation:rddrift 38s linear infinite}svg.scene .cl2{animation:rddrift 52s linear infinite reverse}
+@keyframes rddrift{from{transform:translateX(-520px)}to{transform:translateX(720px)}}
+svg.scene .rain{opacity:var(--rn)}
+svg.scene .drop{animation-name:rdfall;animation-timing-function:linear;animation-iteration-count:infinite}
+@keyframes rdfall{from{transform:translateY(-90px)}to{transform:translateY(790px)}}
+svg.scene .snow{opacity:var(--sn)}
+svg.scene .flake{animation-name:rdsnow;animation-timing-function:linear;animation-iteration-count:infinite}
+@keyframes rdsnow{from{transform:translate(0,-20px)}to{transform:translate(50px,730px)}}
+svg.scene .steam{animation:rdsteam 3.6s ease-in-out infinite}
+@keyframes rdsteam{0%{opacity:0;transform:translateY(10px) scaleY(.8)}40%{opacity:var(--stm)}100%{opacity:0;transform:translateY(-34px) scaleY(1.1)}}
+@media (prefers-reduced-motion:reduce){svg.scene :is(.sway,.leafsh,.cl1,.cl2,.drop,.flake,.steam){animation:none!important}}
+
+/* where scenes sit */
+body.rd .hero svg.rdhero{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+body.rd .hero svg.rdhero .wd{display:none}
+body.rd .hero:has(svg.rdhero) canvas{display:none!important}
+body.rd .hero:has(svg.rdhero){background:#ece3d6!important}
+body.rd .rail .tile .art svg.rdtile{position:absolute;inset:0;width:100%;height:100%}
+body.rd .rail .tile .art.hasscene canvas{display:none!important}
+body.rd .rail .tile .art.hasscene{background:#ece3d6}
+body.rd #cal .ev.rdph svg.rdart{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+body.rd #cal .ev.rdph svg.rdart :is(.wd,.rain,.snow,.clouds,.steam,.leafsh,.fog){display:none}
+body.rd #cal .ev.rdph svg.rdart .shs{display:none}
+body.rd #cal .ev.rdph svg.rdart .sway{animation:none}
+body.rd #cal .ev.rdph{background:#ece3d6!important}
+.rdpill{background:rgba(0,0,0,.24)!important;border-color:rgba(255,255,255,.4)!important}
+
+/* readable text: dark ink on daytime scenes, white at night */
+body.rd.rd-light .hero #hero :is(p,span,div,h1,b,strong,em,small,a){color:#1d1d1f!important;text-shadow:0 1px 24px rgba(255,248,236,.7)!important}
+body.rd.rd-light .hero #hero .cdp{background:rgba(255,255,255,.55)!important;border-color:rgba(0,0,0,.08)!important}
+body.rd.rd-light .hero #hero .cdp i{background:#1d1d1f!important}
+body.rd.rd-light .hero #hero .cta .bt.secondary{color:#1d1d1f!important;border-color:rgba(0,0,0,.25)!important;background:rgba(255,255,255,.35)!important}
+body.rd.rd-light .rdbar{color:#1d1d1f;text-shadow:0 1px 18px rgba(255,248,236,.8)}
+body.rd.rd-light .rdbar>div+div{border-left-color:rgba(0,0,0,.18)}
+body.rd.rd-light.rd-over #bar :is(a,button,span,b,svg,.wm,.brand){color:#1d1d1f!important}
+body.rd.rd-light.rd-over #bar .topnav button{color:rgba(0,0,0,.6)!important;background:transparent!important;border-color:transparent!important}
+body.rd.rd-light.rd-over #bar .topnav button:is([aria-current=true],.on,[aria-pressed=true]){background:#1d1d1f!important;color:#fff!important}
+body.rd.rd-light #cal .ev.rdph>:not(svg){color:#1d1d1f!important;text-shadow:0 1px 8px rgba(255,248,236,.9)!important}
+
+/* old rules hid these layer names inside the hero; scenes need them */
+body.rd svg.scene :is(.tint,.glow,.lamp,.fog,.clouds,.rain,.snow,.win){display:inline!important}
+/* a soft wash behind the hero text so it always reads */
+body.rd .hero:has(svg.rdhero)::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(70% 34% at 50% 26%,rgba(250,244,234,.62),transparent 70%),radial-gradient(80% 22% at 50% 92%,rgba(250,244,234,.45),transparent 70%);transition:opacity 1.4s}
+body.rd.rd-dark .hero:has(svg.rdhero)::after{background:radial-gradient(70% 34% at 50% 26%,rgba(14,16,30,.45),transparent 70%),radial-gradient(80% 22% at 50% 92%,rgba(14,16,30,.35),transparent 70%)}
