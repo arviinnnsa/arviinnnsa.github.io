@@ -1,0 +1,54 @@
+/* ================= To do: one list of everything ================= */
+#evBox{max-width:760px;margin-bottom:44px}
+.ev-head h2{font-size:clamp(34px,6vw,52px);font-weight:700;letter-spacing:-.035em;line-height:1;margin:0}
+.ev-head p{color:var(--m-mute,var(--muted));font-size:15.5px;margin:8px 0 0;line-height:1.45}
+.ev-add{display:flex;gap:10px;align-items:center;margin:22px 0 8px}
+.ev-in{flex:1;min-width:0;font:inherit;font-size:18px;padding:16px 20px;border-radius:22px;border:1px solid var(--m-hair,var(--line));background:var(--surface-2);color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+.ev-in:focus{border-color:var(--k-plan,#1A44EA);box-shadow:0 0 0 4px color-mix(in srgb,var(--k-plan,#1A44EA) 18%,transparent)}
+.ev-in::placeholder{color:var(--m-mute,var(--muted))}
+.ev-addbtn{all:unset;cursor:pointer;flex:none;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--panel,#fff);transition:transform .15s}
+.ev-addbtn:active{transform:scale(.92)}
+.ev-addbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+
+.ev-nudge{margin:14px 0 0;padding:14px 18px;border-radius:20px;background:color-mix(in srgb,var(--k-plan,#1A44EA) 8%,transparent);border:1px solid color-mix(in srgb,var(--k-plan,#1A44EA) 20%,transparent)}
+.ev-nudge b{display:block;font-size:15px;font-weight:600}
+.ev-nudge span{display:block;font-size:13.5px;color:var(--m-mute,var(--muted));margin-top:2px}
+.ev-nudge em,.ev-hint em{font-style:normal;font-weight:600;color:var(--ink)}
+
+.ev-grp{margin-top:28px}
+.ev-grp h3{font-size:22px;font-weight:650;letter-spacing:-.015em;margin:0 0 4px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ev-grp h3 small{font-size:13px;font-weight:400;color:var(--m-mute,var(--muted));letter-spacing:0}
+.ev-grp h3 small.warn{color:var(--k-work,#C99700)}
+.ev-hint{color:var(--m-mute,var(--muted));font-size:14.5px;margin:6px 0 0;line-height:1.45}
+.ev-tomorrow{padding:16px 18px 10px;margin-top:22px;border-radius:24px;background:var(--surface-2);border:1px solid var(--m-hair,var(--line))}
+.ev-tomorrow h3{font-size:19px}
+
+.ev-list{list-style:none;margin:0;padding:0}
+.ev-item{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:0 10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line-soft,var(--m-hair));animation:slidein .3s ease}
+.ev-item:last-child{border-bottom:0}
+.ev-ck{all:unset;cursor:pointer;width:26px;height:26px;border-radius:50%;border:2px solid var(--faint,#9A9CA0);display:grid;place-items:center;transition:background .2s,border-color .2s,transform .25s cubic-bezier(.34,1.56,.64,1)}
+.ev-ck svg{width:13px;height:13px;fill:none;stroke:transparent;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.ev-item.pop .ev-ck{transform:scale(1.18)}
+.ev-item.done>.ev-ck,.ev-item.pop>.ev-ck{background:#30a46c;border-color:#30a46c}
+.ev-item.done>.ev-ck svg,.ev-item.pop>.ev-ck svg{stroke:#fff}
+.ev-body{all:unset;cursor:pointer;min-width:0;display:block}
+.ev-body b{display:block;font-weight:500;font-size:16.5px;line-height:1.35;overflow-wrap:anywhere}
+.ev-item.done .ev-body b{text-decoration:line-through;opacity:.5}
+.ev-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.ev-tag{font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;color:var(--m-mute,var(--muted));background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.ev-tag.ev-from{color:var(--k-work,#C99700);background:color-mix(in srgb,var(--k-work,#C99700) 12%,transparent)}
+
+.ev-pick{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--m-hair,var(--line));color:var(--ink);white-space:nowrap;transition:background .2s,color .2s,border-color .2s,transform .15s}
+.ev-pick:active{transform:scale(.94)}
+.ev-pick svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ev-pick.on{background:var(--ink);color:var(--panel,#fff);border-color:var(--ink)}
+.ev-today .ev-pick{color:var(--m-mute,var(--muted));font-weight:500}
+
+.ev-more{grid-column:2 / -1;display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ev-mini{all:unset;cursor:pointer;position:relative;font-size:13px;padding:6px 12px;border-radius:999px;background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.ev-mini input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ev-del{color:#d0453a}
+
+.ev-donebtn{all:unset;cursor:pointer;margin-top:22px;font-size:14px;color:var(--m-mute,var(--muted));padding:6px 2px}
+.ev-donelist{margin-top:4px}
+@media (max-width:520px){.ev-pick{padding:6px 11px;font-size:12.5px}}
