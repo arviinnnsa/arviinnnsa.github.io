@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ARVIN · Design options</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f5f7;--ink:#1d1d1f;--mute:#86868b;--hair:rgba(0,0,0,.09);--card:#fff;--blue:#0071e3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1}
+.top{background:#000;color:#f5f5f7;text-align:center;padding:72px 24px 64px}
+.top small{font-size:17px;font-weight:600}
+.top h1{font-size:clamp(44px,8vw,80px);font-weight:700;letter-spacing:-.045em;line-height:1.02;margin:10px 0 12px}
+.top p{color:#86868b;font-size:19px;max-width:30ch;margin:0 auto}
+.jump{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.jump a{color:#f5f5f7;text-decoration:none;font-size:14px;font-weight:500;padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.3)}
+section.grp{padding:72px 24px 24px;max-width:1240px;margin:0 auto}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:999px;background:#fff;border:1px solid var(--hair)}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.ghead{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin:14px 0 32px;flex-wrap:wrap}
+.ghead h2{font-size:clamp(36px,6vw,60px);font-weight:700;letter-spacing:-.04em;line-height:1}
+.ghead p{color:var(--mute);font-size:15px;max-width:34ch;line-height:1.45}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:28px}
+.opt{display:flex;flex-direction:column;gap:14px}
+.label{display:flex;align-items:baseline;gap:10px}
+.label b{font-size:28px;font-weight:200;letter-spacing:-.02em}
+.label span{font-size:16px;font-weight:600}
+.label em{font-style:normal;color:var(--mute);font-size:14px}
+/* phone */
+.phone{width:100%;max-width:390px;margin:0 auto;border-radius:44px;background:#fff;border:1px solid var(--hair);box-shadow:0 30px 60px -30px rgba(0,0,0,.25);overflow:hidden;position:relative;height:720px}
+.phone.dark{background:#000;border-color:#222}
+.sb{height:46px;display:flex;justify-content:space-between;align-items:center;padding:0 28px;font-size:15px;font-weight:600}
+.phone.dark .sb,.sb.light{color:#fff}
+.scroll{position:absolute;inset:46px 0 0;overflow:hidden}
+.pad{padding:0 18px}
+.tabbar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:2px;padding:6px;border-radius:999px;background:rgba(255,255,255,.72);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);border:1px solid rgba(255,255,255,.6);box-shadow:0 8px 30px rgba(0,0,0,.15)}
+.tabbar span{white-space:nowrap;font-size:10.5px;font-weight:500;padding:8px 11px;border-radius:999px;color:#555}
+.tabbar span.on{background:rgba(0,0,0,.07);color:#000;font-weight:600}
+/* imagery */
+.img{position:relative;overflow:hidden;background-size:cover;background-position:center}
+.glass{backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5);background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:5px 11px;border-radius:999px}
+.dots{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;letter-spacing:1px}
+.giant{font-weight:700;letter-spacing:-.06em;line-height:.8;color:rgba(255,255,255,.92)}
+.thin{font-weight:200;letter-spacing:-.03em}
+.mute{color:var(--mute)}
+.hair{height:1px;background:var(--hair)}
+.btn{display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;padding:12px 20px;border-radius:999px;background:#000;color:#fff}
+.btn.blue{background:var(--blue)}
+.btn.out{background:transparent;border:1px solid rgba(255,255,255,.35)}
+.stats{display:flex}
+.stats>div{flex:1;text-align:center;padding:2px 4px}
+.stats>div+div{border-left:1px solid var(--hair)}
+.stats b{display:block;font-weight:500;font-size:17px}
+.stats small{display:block;font-size:11.5px;color:var(--mute);margin-top:3px}
+.row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--hair)}
+.row:last-child{border-bottom:0}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.tag{font-size:11.5px;font-weight:500;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.05)}
+footer{text-align:center;color:var(--mute);font-size:14px;padding:64px 24px 90px;line-height:1.6}
+@media (max-width:420px){section.grp{padding:56px 14px 16px}.phone{height:680px;border-radius:38px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <small>ARVIN · Design options</small>
+  <h1>Pick your look.</h1>
+  <p>Three options for each part of the app. Tell me a number for each one.</p>
+  <nav class="jump"><a href="#today">Today</a><a href="#school">School</a><a href="#week">Schedule</a><a href="#due">Due dates</a><a href="#stats">Numbers</a></nav>
+</header>
+
+<!-- ============ TODAY ============ -->
+<section class="grp" id="today">
+  <span class="eyebrow"><i></i>1 · Today</span>
+  <div class="ghead"><h2>Today hero.</h2><p>The first thing you see when you open the app. Photos are placeholders; yours go here.</p></div>
+  <div class="opts">
+    <div class="opt">
+      <div class="label"><b>1A</b><span>Travel</span><em>full photo, giant word, info strip</em></div>
+      <div class="phone dark">
+        <div class="img" data-scene="lake" style="position:absolute;inset:0;height:560px">
+          <div class="sb light" style="position:relative">9:41<span>●●●</span></div>
+          <div style="position:absolute;top:150px;left:0;right:0;text-align:center;color:#fff">
+            <div style="font-size:14px;font-weight:600;opacity:.9">Next · Monday 10:30 AM</div>
+            <div class="giant" style="font-size:60px;margin-top:14px;color:#fff;letter-spacing:-.05em">Accounting.</div>
+            <div style="font-size:14px;opacity:.85;margin-top:16px">Financial Accounting I · Room A220</div>
+          </div>
+          <div class="glass" style="position:absolute;left:14px;right:14px;bottom:14px;border-radius:22px;display:flex;padding:12px 4px">
+            <div style="flex:1;padding:0 10px"><small style="font-size:10.5px;opacity:.75">Next</small><b style="display:block;font-weight:500;font-size:15px">10:30</b></div>
+            <div style="flex:1;padding:0 10px;border-left:1px solid rgba(255,255,255,.25)"><small style="font-size:10.5px;opacity:.75">Leave by</small><b style="display:block;font-weight:500;font-size:15px">9:50</b></div>
+            <div style="flex:1;padding:0 10px;border-left:1px solid rgba(255,255,255,.25)"><small style="font-size:10.5px;opacity:.75">Due soon</small><b style="display:block;font-weight:500;font-size:15px">2</b></div>
+            <div style="flex:1;padding:0 10px;border-left:1px solid rgba(255,255,255,.25)"><small style="font-size:10.5px;opacity:.75">Weather</small><b style="display:block;font-weight:500;font-size:15px">6°</b></div>
+          </div>
+        </div>
+        <div style="position:absolute;top:560px;left:0;right:0;bottom:0;background:#f5f5f7;padding:22px 20px;color:#1d1d1f">
+          <div style="font-size:22px;font-weight:700;letter-spacing:-.02em">Today's schedule</div>
+          <div class="row"><span class="thin" style="font-size:18px;width:62px">10:30</span><span class="dot" style="background:#5a6fd6"></span><b style="font-weight:600;font-size:15px">Accounting · Lecture</b></div>
+        </div>
+        <div class="tabbar"><span class="on">Today</span><span>To do</span><span>Schedule</span><span>School</span><span>Due</span></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="label"><b>1B</b><span>Framed</span><em>black hero, photo in a frame</em></div>
+      <div class="phone dark">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll" style="color:#f5f5f7">
+          <div style="text-align:center;padding:34px 20px 0">
+            <div style="font-size:15px;font-weight:600">Good evening, Arvin</div>
+            <div style="font-size:48px;font-weight:700;letter-spacing:-.045em;line-height:1;margin:10px 0">Accounting.</div>
+            <div style="color:#86868b;font-size:15px">Tomorrow · 10:30 AM · leave by 9:50</div>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:20px"><span class="btn blue">View details</span><span class="btn out">Add notes</span></div>
+          </div>
+          <div class="img" data-scene="lake" style="margin:28px 14px 0;height:330px;border-radius:32px;border:1px solid rgba(255,255,255,.12)">
+            <span class="pill glass" style="position:absolute;top:14px;right:14px">Cloudy 6°</span>
+            <div style="position:absolute;left:20px;bottom:18px;color:#fff">
+              <div class="thin" style="font-size:72px;line-height:.9">13h</div>
+              <div style="font-size:13px;opacity:.85;margin-top:6px">until class</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar"><span class="on">Today</span><span>To do</span><span>Schedule</span><span>School</span><span>Due</span></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="label"><b>1C</b><span>Panora</span><em>word runs off the bottom of the photo</em></div>
+      <div class="phone">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll pad">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 14px"><b style="font-size:26px;letter-spacing:-.02em">Sunday</b><span class="mute" style="font-size:14px">Nov 22</span></div>
+          <div class="img" data-scene="dunes" style="height:400px;border-radius:30px">
+            <span class="pill glass" style="position:absolute;top:16px;left:16px">Next · 10:30 AM</span>
+            <span class="dots glass" style="position:absolute;top:14px;right:14px">···</span>
+            <div class="giant" style="position:absolute;left:14px;bottom:-14px;font-size:104px">Acct</div>
+          </div>
+          <div class="stats" style="margin-top:20px">
+            <div><b>9:50</b><small>leave by</small></div><div><b>2</b><small>due this week</small></div><div><b>3</b><small>to do today</small></div>
+          </div>
+        </div>
+        <div class="tabbar"><span class="on">Today</span><span>To do</span><span>Schedule</span><span>School</span><span>Due</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCHOOL ============ -->
+<section class="grp" id="school">
+  <span class="eyebrow"><i></i>2 · School</span>
+  <div class="ghead"><h2>Course cards.</h2><p>One card per course. Tap a card to open the course.</p></div>
+  <div class="opts">
+    <div class="opt">
+      <div class="label"><b>2A</b><span>Panora stack</span><em>tall cards, giant course name</em></div>
+      <div class="phone dark">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll pad">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px;color:#fff"><b style="font-size:24px">Fall 2026 ⌄</b><span class="mute" style="font-size:13px">3 courses</span></div>
+          <div class="img" data-scene="alps" style="height:196px;border-radius:26px;margin-bottom:12px"><span class="pill glass" style="position:absolute;top:14px;left:14px">2 due this week</span><span class="dots glass" style="position:absolute;top:12px;right:12px">···</span><div class="giant" style="position:absolute;left:12px;bottom:-10px;font-size:92px">ECON</div></div>
+          <div class="img" data-scene="hills" style="height:196px;border-radius:26px;margin-bottom:12px"><span class="pill glass" style="position:absolute;top:14px;left:14px">Essay in 6 days</span><span class="dots glass" style="position:absolute;top:12px;right:12px">···</span><div class="giant" style="position:absolute;left:12px;bottom:-10px;font-size:92px">POLI</div></div>
+          <div class="img" data-scene="dunes" style="height:196px;border-radius:26px"><span class="pill glass" style="position:absolute;top:14px;left:14px">Midterm in 9 days</span><span class="dots glass" style="position:absolute;top:12px;right:12px">···</span><div class="giant" style="position:absolute;left:12px;bottom:-10px;font-size:92px">FMGT</div></div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span>Schedule</span><span class="on">School</span><span>Due</span></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="label"><b>2B</b><span>Swipe cards</span><em>portrait cards side by side</em></div>
+      <div class="phone">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll">
+          <div class="pad"><div style="font-size:40px;font-weight:700;letter-spacing:-.04em;margin:10px 0 4px">School.</div><div class="mute" style="font-size:15px;margin-bottom:20px">Swipe through your courses.</div></div>
+          <div style="display:flex;gap:12px;padding-left:18px">
+            <div class="img" data-scene="alps" style="flex:none;width:250px;height:340px;border-radius:28px"><span class="pill glass" style="position:absolute;top:14px;left:14px">2 due</span><div style="position:absolute;left:18px;bottom:18px;color:#fff"><div style="font-size:30px;font-weight:700;letter-spacing:-.03em">Macro</div><div style="font-size:13px;opacity:.85">ECON 1221 · Tue, Thu</div></div></div>
+            <div class="img" data-scene="hills" style="flex:none;width:250px;height:340px;border-radius:28px"><span class="pill glass" style="position:absolute;top:14px;left:14px">1 due</span><div style="position:absolute;left:18px;bottom:18px;color:#fff"><div style="font-size:30px;font-weight:700">Politics</div><div style="font-size:13px;opacity:.85">POLI 1100</div></div></div>
+          </div>
+          <div class="pad" style="margin-top:20px"><div class="stats"><div><b>84%</b><small>grade</small></div><div><b>2</b><small>due</small></div><div><b>Tue</b><small>next class</small></div></div></div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span>Schedule</span><span class="on">School</span><span>Due</span></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="label"><b>2C</b><span>Profile card</span><em>photo fades into the card, stats + button</em></div>
+      <div class="phone" style="background:#f5f5f7">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll pad">
+          <div style="font-size:40px;font-weight:700;letter-spacing:-.04em;margin:10px 0 18px">School.</div>
+          <div style="background:#fff;border-radius:28px;overflow:hidden;border:1px solid var(--hair);margin-bottom:14px">
+            <div class="img" data-scene="alps" style="height:150px"><div style="position:absolute;inset:auto 0 0;height:70px;background:linear-gradient(to bottom,transparent,#fff)"></div><span class="dots glass" style="position:absolute;top:12px;right:12px">···</span></div>
+            <div style="padding:0 18px 18px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><div><b style="font-size:19px">Macroeconomics</b><div class="mute" style="font-size:13px">ECON 1221 · Tue, Thu 2:30</div></div><span class="tag">2 due</span></div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:16px"><div class="stats" style="flex:1"><div><b>84%</b><small>grade</small></div><div><b>Ch 9</b><small>this week</small></div></div><span class="btn">Open</span></div>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:28px;overflow:hidden;border:1px solid var(--hair)">
+            <div class="img" data-scene="hills" style="height:150px"><div style="position:absolute;inset:auto 0 0;height:70px;background:linear-gradient(to bottom,transparent,#fff)"></div></div>
+            <div style="padding:0 18px 18px"><b style="font-size:19px">Politics</b><div class="mute" style="font-size:13px">POLI 1100 · Dr. Prosperi</div></div>
+          </div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span>Schedule</span><span class="on">School</span><span>Due</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WEEK ============ -->
+<section class="grp" id="week">
+  <span class="eyebrow"><i></i>3 · Schedule</span>
+  <div class="ghead"><h2>Your week.</h2><p>How each day shows up. All options keep your calendar sync.</p></div>
+  <div class="opts">
+    <div class="opt">
+      <div class="label"><b>3A</b><span>Day cards</span><em>one photo card per day</em></div>
+      <div class="phone dark">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll pad">
+          <div style="display:flex;justify-content:space-between;color:#fff;margin:4px 0 14px"><b style="font-size:24px">This week ⌄</b><span class="mute" style="font-size:13px">Nov 23 – 29</span></div>
+          <div class="img" data-scene="lake" style="height:190px;border-radius:26px;margin-bottom:12px"><span class="pill glass" style="position:absolute;top:14px;left:14px">1 class · free from 12</span><div class="giant" style="position:absolute;left:12px;bottom:-10px;font-size:96px">Mon</div></div>
+          <div class="img" data-scene="ocean" style="height:190px;border-radius:26px;margin-bottom:12px"><span class="pill glass" style="position:absolute;top:14px;left:14px">2 classes</span><div class="giant" style="position:absolute;left:12px;bottom:-10px;font-size:96px">Tue</div></div>
+          <div class="img" data-scene="hills" style="height:190px;border-radius:26px"><span class="pill glass" style="position:absolute;top:14px;left:14px">Shift · Fremont</span><div class="giant" style="position:absolute;left:12px;bottom:-10px;font-size:96px">Wed</div></div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span class="on">Schedule</span><span>School</span><span>Due</span></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="label"><b>3B</b><span>Day strip</span><em>tap a day, one photo, clean list</em></div>
+      <div class="phone">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll pad">
+          <div style="display:flex;justify-content:space-between;margin:8px 2px 16px">
+            <div style="text-align:center"><small class="mute" style="font-size:11px">Mon</small><div class="thin" style="font-size:26px">23</div></div>
+            <div style="text-align:center;background:#000;color:#fff;border-radius:18px;padding:4px 10px"><small style="font-size:11px;opacity:.7">Tue</small><div class="thin" style="font-size:26px">24</div></div>
+            <div style="text-align:center"><small class="mute" style="font-size:11px">Wed</small><div class="thin" style="font-size:26px">25</div></div>
+            <div style="text-align:center"><small class="mute" style="font-size:11px">Thu</small><div class="thin" style="font-size:26px">26</div></div>
+            <div style="text-align:center"><small class="mute" style="font-size:11px">Fri</small><div class="thin" style="font-size:26px">27</div></div>
+          </div>
+          <div class="img" data-scene="ocean" style="height:220px;border-radius:28px"><div style="position:absolute;left:18px;bottom:16px;color:#fff"><div style="font-size:34px;font-weight:700;letter-spacing:-.03em">Tuesday</div><div style="font-size:13px;opacity:.85">2 classes · free from 4:30</div></div></div>
+          <div style="margin-top:8px">
+            <div class="row"><span class="thin" style="font-size:20px;width:64px">12:30</span><span class="dot" style="background:#c26a4a"></span><div><b style="font-weight:600;font-size:15px">Politics</b><div class="mute" style="font-size:12.5px">Lecture · A130</div></div></div>
+            <div class="row"><span class="thin" style="font-size:20px;width:64px">2:30</span><span class="dot" style="background:#2f8f5b"></span><div><b style="font-weight:600;font-size:15px">Macro</b><div class="mute" style="font-size:12.5px">Lecture · B214</div></div></div>
+          </div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span class="on">Schedule</span><span>School</span><span>Due</span></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="label"><b>3C</b><span>Quiet list</span><em>no photos, big thin dates</em></div>
+      <div class="phone">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll pad">
+          <div style="font-size:40px;font-weight:700;letter-spacing:-.04em;margin:10px 0 4px">This week.</div>
+          <div class="mute" style="font-size:15px;margin-bottom:10px">8.5 h class · 5.1 h Pedalheads</div>
+          <div class="row" style="align-items:flex-start"><div style="width:56px"><div class="thin" style="font-size:38px;line-height:1">23</div><small class="mute">Mon</small></div><div style="flex:1;padding-top:4px"><div style="font-size:15px"><span class="dot" style="display:inline-block;background:#5a6fd6;margin-right:8px"></span>10:30 Accounting</div><div class="mute" style="font-size:13px;margin-top:6px">Free from 12</div></div></div>
+          <div class="row" style="align-items:flex-start"><div style="width:56px"><div class="thin" style="font-size:38px;line-height:1">24</div><small class="mute">Tue</small></div><div style="flex:1;padding-top:4px"><div style="font-size:15px"><span class="dot" style="display:inline-block;background:#c26a4a;margin-right:8px"></span>12:30 Politics</div><div style="font-size:15px;margin-top:6px"><span class="dot" style="display:inline-block;background:#2f8f5b;margin-right:8px"></span>2:30 Macro</div></div></div>
+          <div class="row" style="align-items:flex-start"><div style="width:56px"><div class="thin" style="font-size:38px;line-height:1">25</div><small class="mute">Wed</small></div><div style="flex:1;padding-top:4px"><div style="font-size:15px"><span class="dot" style="display:inline-block;background:#C99700;margin-right:8px"></span>4:00 Pedalheads · Fremont</div></div></div>
+          <div class="row" style="align-items:flex-start"><div style="width:56px"><div class="thin" style="font-size:38px;line-height:1">26</div><small class="mute">Thu</small></div><div style="flex:1;padding-top:4px"><div style="font-size:15px"><span class="dot" style="display:inline-block;background:#c26a4a;margin-right:8px"></span>12:30 Politics</div></div></div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span class="on">Schedule</span><span>School</span><span>Due</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DUE ============ -->
+<section class="grp" id="due">
+  <span class="eyebrow"><i></i>4 · Due dates</span>
+  <div class="ghead"><h2>Due dates.</h2><p>Your favourite part of the app now, so all three keep the countdown in days.</p></div>
+  <div class="opts">
+    <div class="opt">
+      <div class="label"><b>4A</b><span>Pick the Place</span><em>eyebrow, big title, photo cards</em></div>
+      <div class="phone">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll">
+          <div class="pad"><span class="eyebrow" style="margin-top:8px"><i></i>Next 2 weeks</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin:12px 0 20px"><div style="font-size:40px;font-weight:700;letter-spacing:-.04em;line-height:1">Due<br>dates.</div><div class="mute" style="font-size:13px;max-width:14ch;text-align:right">3 things, soonest first.</div></div></div>
+          <div style="display:flex;gap:12px;padding-left:18px">
+            <div style="flex:none;width:230px;background:#fff;border:1px solid var(--hair);border-radius:24px;padding:12px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:2px 4px 10px"><div><b style="font-size:15px">Homework 5</b><div class="mute" style="font-size:12px">Macro · MyLab</div></div><span class="tag">3 days</span></div>
+              <div class="img" data-scene="alps" style="height:200px;border-radius:18px"><span class="pill glass" style="position:absolute;bottom:10px;left:10px">Wed · 11:59 PM</span></div>
+            </div>
+            <div style="flex:none;width:230px;background:#fff;border:1px solid var(--hair);border-radius:24px;padding:12px">
+              <div style="display:flex;justify-content:space-between;padding:2px 4px 10px"><div><b style="font-size:15px">Briefing note</b><div class="mute" style="font-size:12px">Politics</div></div><span class="tag">6 days</span></div>
+              <div class="img" data-scene="hills" style="height:200px;border-radius:18px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span>Schedule</span><span>School</span><span class="on">Due</span></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="label"><b>4B</b><span>Countdown</span><em>giant thin numbers, no photos</em></div>
+      <div class="phone">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll pad">
+          <span class="eyebrow" style="margin-top:8px"><i></i>Next 2 weeks</span>
+          <div style="font-size:40px;font-weight:700;letter-spacing:-.04em;margin:12px 0 10px">Due dates.</div>
+          <div class="row"><div style="width:84px"><div class="thin" style="font-size:54px;line-height:.95">3</div><small class="mute">days</small></div><div><b style="font-size:16px;font-weight:600">Homework 5</b><div class="mute" style="font-size:13px"><span class="dot" style="display:inline-block;background:#2f8f5b;margin-right:6px"></span>Macro · Wed 11:59 PM</div></div></div>
+          <div class="row"><div style="width:84px"><div class="thin" style="font-size:54px;line-height:.95">6</div><small class="mute">days</small></div><div><b style="font-size:16px;font-weight:600">Briefing note</b><div class="mute" style="font-size:13px"><span class="dot" style="display:inline-block;background:#c26a4a;margin-right:6px"></span>Politics · Sat</div></div></div>
+          <div class="row"><div style="width:84px"><div class="thin" style="font-size:54px;line-height:.95">9</div><small class="mute">days</small></div><div><b style="font-size:16px;font-weight:600">Midterm 2</b><div class="mute" style="font-size:13px"><span class="dot" style="display:inline-block;background:#5a6fd6;margin-right:6px"></span>Accounting · Tue</div></div></div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span>Schedule</span><span>School</span><span class="on">Due</span></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="label"><b>4C</b><span>Spotlight</span><em>next one big, the rest as a list</em></div>
+      <div class="phone">
+        <div class="sb">9:41<span>●●●</span></div>
+        <div class="scroll pad">
+          <div style="font-size:40px;font-weight:700;letter-spacing:-.04em;margin:10px 0 16px">Due dates.</div>
+          <div class="img" data-scene="lake" style="height:300px;border-radius:30px">
+            <span class="pill glass" style="position:absolute;top:14px;left:14px">Next up · Macro</span>
+            <div style="position:absolute;left:20px;right:20px;bottom:18px;color:#fff;display:flex;justify-content:space-between;align-items:flex-end">
+              <div><div style="font-size:24px;font-weight:700;letter-spacing:-.02em">Homework 5</div><div style="font-size:13px;opacity:.85">Wed · 11:59 PM</div></div>
+              <div style="text-align:right"><div class="thin" style="font-size:72px;line-height:.85">3</div><div style="font-size:12px;opacity:.85">days left</div></div>
+            </div>
+          </div>
+          <div style="margin-top:6px">
+            <div class="row"><span class="thin" style="font-size:24px;width:40px">6</span><div style="flex:1"><b style="font-weight:600;font-size:15px">Briefing note</b><div class="mute" style="font-size:12.5px">Politics · Sat</div></div></div>
+            <div class="row"><span class="thin" style="font-size:24px;width:40px">9</span><div style="flex:1"><b style="font-weight:600;font-size:15px">Midterm 2</b><div class="mute" style="font-size:12.5px">Accounting · Tue</div></div></div>
+          </div>
+        </div>
+        <div class="tabbar"><span>Today</span><span>To do</span><span>Schedule</span><span>School</span><span class="on">Due</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="grp" id="stats">
+  <span class="eyebrow"><i></i>5 · Numbers</span>
+  <div class="ghead"><h2>Numbers.</h2><p>How hours, counts and grades look everywhere in the app. Replaces the grey boxes.</p></div>
+  <div class="opts">
+    <div class="opt">
+      <div class="label"><b>5A</b><span>Hairline row</span><em>Henrie style, with one button</em></div>
+      <div style="background:#fff;border-radius:28px;border:1px solid var(--hair);padding:22px;display:flex;align-items:center;gap:12px">
+        <div class="stats" style="flex:1"><div><b>8.5 h</b><small>in class</small></div><div><b>5.1 h</b><small>Pedalheads</small></div><div><b>3</b><small>due</small></div></div>
+        <span class="btn">Plan week</span>
+      </div>
+    </div>
+    <div class="opt">
+      <div class="label"><b>5B</b><span>Big thin</span><em>Apple keynote numbers</em></div>
+      <div style="background:#fff;border-radius:28px;border:1px solid var(--hair);padding:24px 18px;display:flex">
+        <div style="flex:1"><div class="thin" style="font-size:46px;line-height:1">8.5<small style="font-size:18px">h</small></div><small class="mute" style="font-size:12px">in class</small></div>
+        <div style="flex:1;border-left:1px solid var(--hair);padding-left:14px"><div class="thin" style="font-size:46px;line-height:1">5.1<small style="font-size:18px">h</small></div><small class="mute" style="font-size:12px">Pedalheads</small></div>
+        <div style="flex:1;border-left:1px solid var(--hair);padding-left:14px"><div class="thin" style="font-size:46px;line-height:1">3</div><small class="mute" style="font-size:12px">due</small></div>
+      </div>
+    </div>
+    <div class="opt">
+      <div class="label"><b>5C</b><span>On the photo</span><em>glass strip on an image</em></div>
+      <div class="img" data-scene="ocean" style="height:170px;border-radius:28px">
+        <div class="glass" style="position:absolute;left:12px;right:12px;bottom:12px;border-radius:20px;display:flex;padding:12px 4px;text-align:center">
+          <div style="flex:1"><b style="display:block;font-weight:500">8.5 h</b><small style="font-size:11px;opacity:.8">in class</small></div>
+          <div style="flex:1;border-left:1px solid rgba(255,255,255,.25)"><b style="display:block;font-weight:500">5.1 h</b><small style="font-size:11px;opacity:.8">Pedalheads</small></div>
+          <div style="flex:1;border-left:1px solid rgba(255,255,255,.25)"><b style="display:block;font-weight:500">3</b><small style="font-size:11px;opacity:.8">due</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>Placeholder landscapes only. Send your own photos and they replace these.<br>Reply with one pick per part, e.g. <b>1A, 2C, 3B, 4A, 5B</b>.</footer>
+
+<script>
+/* placeholder landscapes drawn in SVG, so the page needs no downloads */
+const S = {
+  alps:  { sky:["#2f6fa8","#9cc3df"], far:"#7f9fbf", mid:"#e9eef3", near:"#3b5672", snow:true },
+  lake:  { sky:["#1b2340","#d9906a"], far:"#4a4f73", mid:"#2e3355", near:"#151a30", water:"#c27b63" },
+  dunes: { sky:["#8ea2c6","#e9c9a6"], far:"#c98a5a", mid:"#a8592f", near:"#7a3a1c" },
+  hills: { sky:["#9fb9cf","#dfe8ea"], far:"#8aa07a", mid:"#4f7a3e", near:"#2c4a22" },
+  ocean: { sky:["#5e7f9c","#d8dfe4"], far:"#7d96a8", mid:"#3e6377", near:"#1f3a49", water:"#5b8197" }
+};
+function svg(k){
+  const s=S[k];
+  const water = s.water ? `<rect y="430" width="800" height="170" fill="${s.water}" opacity=".55"/>` : "";
+  const snow = s.snow ? `<path d="M330 170 L400 120 L470 175 L440 165 L420 185 L395 160 L370 185 Z" fill="#fff" opacity=".95"/>` : "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.sky[0]}"/><stop offset="1" stop-color="${s.sky[1]}"/></linearGradient>
+  <linearGradient id="h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <path d="M0 330 Q120 250 230 300 T470 260 T800 300 V600 H0Z" fill="${s.far}" opacity=".7"/>
+  <path d="M0 400 L180 260 L300 330 L400 120 L560 330 L680 250 L800 340 V600 H0Z" fill="${s.mid}"/>
+  ${snow}
+  <path d="M0 400 L180 260 L300 330 L400 120 L560 330 L680 250 L800 340 V600 H0Z" fill="url(#h)"/>
+  ${water}
+  <path d="M0 470 Q200 420 400 470 T800 450 V600 H0Z" fill="${s.near}"/>
+  </svg>`;
+}
+document.querySelectorAll("[data-scene]").forEach(el=>{
+  el.style.backgroundImage = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg(el.dataset.scene))}")`;
+});
+</script>
+</body>
+</html>
